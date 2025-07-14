@@ -1,7 +1,9 @@
 package com.example.account.controller;
 
+import com.example.account.controller.request.RegisterAccountRequest;
 import com.example.account.controller.response.LoginAccountResponse;
 import com.example.account.controller.request.LoginAccountRequest;
+import com.example.account.controller.response.RegisterAccountResponse;
 import com.example.account.entity.Account;
 import com.example.account.redis_cache.RedisCacheService;
 import com.example.account.repository.AccountRepository;
@@ -25,6 +27,15 @@ public class AccountController {
     @Autowired
     RedisCacheService redisCacheService;
 
+    @PostMapping("/register")
+    public RegisterAccountResponse register(@RequestBody RegisterAccountRequest request){
+        log.info("register -> RegisterAccountRequest: {}", request);
+        Account registerAccount = request.toAccount();
+        Account createdAccount = accountRepository.save(registerAccount);
+
+        return RegisterAccountResponse.from(createdAccount);
+    }
+
     @PostMapping("/login")
     public LoginAccountResponse login(@RequestBody LoginAccountRequest request){
         log.info("login -> LoginRequest : {}", request);
@@ -47,7 +58,7 @@ public class AccountController {
 
         String token = UUID.randomUUID().toString();
         redisCacheService.setKeyAndValue(token, account.getId(), Duration.ofDays(1));
-        return LoginAccountResponse.from(message,token);
+        return LoginAccountResponse.from(token, message);
     }
 
 

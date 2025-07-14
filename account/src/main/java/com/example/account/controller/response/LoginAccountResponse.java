@@ -11,8 +11,8 @@ public class LoginAccountResponse {
         this.message = message;
     }
 
-    public static LoginAccountResponse from(String message, String userToken) {
-        return new LoginAccountResponse(message, userToken);
+    public static LoginAccountResponse from(String userToken, String message) {
+        return new LoginAccountResponse(userToken, message);
     }
 
     public LoginAccountResponse(String userToken, String message) {
