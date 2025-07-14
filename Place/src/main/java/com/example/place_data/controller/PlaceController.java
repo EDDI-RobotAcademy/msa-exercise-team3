@@ -2,16 +2,18 @@ package com.example.place_data.controller;
 
 import com.example.place_data.controller.request.PlaceSearchRequest;
 import com.example.place_data.controller.request.RegisterPlaceWithAuthorizationRequest;
+import com.example.place_data.controller.request.UpdatePlaceWithAuthorizationRequest;
 import com.example.place_data.controller.response.RegisterPlaceWithAuthorizationResponse;
+import com.example.place_data.controller.response.UpdatePlaceResponse;
 import com.example.place_data.entity.Place;
 import com.example.place_data.repository.PlaceRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -75,7 +77,6 @@ public class PlaceController {
         String category = request.getCategory();
         String location = request.getLocation();
 
-        // 이건 예시일 뿐이고, 실제로는 Specification이나 QueryDSL을 쓰는 게 더 좋습니다.
         if (title != null && category != null && location != null) {
             return placeRepository.findByTitleContainingAndCategoryAndLocation(title, category, location);
         } else if (title != null && category != null) {
@@ -94,6 +95,40 @@ public class PlaceController {
             return placeRepository.findAll();
         }
     }
+
+    // 여행지 수정 API 구현 (인증받은 사용자만 여행지 수정 가능)
+    @PostMapping("/update")
+    public UpdatePlaceResponse updatePlace(
+            @RequestHeader("Authorization") String token,
+            @RequestBody UpdatePlaceWithAuthorizationRequest request) {
+        log.info("Received request to update a place");
+
+        // userToken 획득
+        String pureToken = extractToken(token);
+
+        // FeignClient를 통해 account 서비스에 accountId 요청
+        IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
+        Long accountId = response.getAccountId();
+        log.info("accountId = {}", accountId);
+
+        Long place_id = request.getPlace_id();
+        Optional<Place> maybePlace = placeRepository.findById(place_id);
+
+        if(maybePlace.isEmpty()){
+            return null;
+        }
+        Place foundPlace = maybePlace.get();
+        foundPlace.setTitle(request.getTitle());
+        foundPlace.setContent(request.getContent());
+        foundPlace.setCategory(request.getCategory());
+        foundPlace.setLocation(request.getLocation());
+        foundPlace.setAddress(request.getAddress());
+        Place updatedPlace = placeRepository.save(foundPlace);
+        return UpdatePlaceResponse.from(updatedPlace);
+    }
+
+
+
 
 
 
