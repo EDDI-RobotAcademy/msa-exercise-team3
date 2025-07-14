@@ -1,12 +1,12 @@
 #spring.application.name=account
 spring:
   application:
-    name: account
+    name: ACCOUNT
 
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:mysql://localhost:3306/pd_db?allowpublickeyretrieval=true&usessl=false&serverTimezone=UTC
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     dialect: org.hibernate.dialect.MySQL8Dialect
 
