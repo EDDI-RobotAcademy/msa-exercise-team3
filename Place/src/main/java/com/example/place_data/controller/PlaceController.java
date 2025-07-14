@@ -1,5 +1,6 @@
 package com.example.place_data.controller;
 
+import com.example.place_data.controller.client.AccountClient;
 import com.example.place_data.controller.request.PlaceSearchRequest;
 import com.example.place_data.controller.request.RegisterPlaceWithAuthorizationRequest;
 import com.example.place_data.controller.request.UpdatePlaceWithAuthorizationRequest;
@@ -9,6 +10,7 @@ import com.example.place_data.entity.Place;
 import com.example.place_data.repository.PlaceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,7 +31,7 @@ public class PlaceController {
     }
 
     // 여행지 등록 API 구현
-    @PostMapping
+    @PostMapping("/register")
     public RegisterPlaceWithAuthorizationResponse register(
             @RequestHeader("Authorization") String token,
             @RequestBody RegisterPlaceWithAuthorizationRequest request) {
@@ -115,9 +117,13 @@ public class PlaceController {
         Optional<Place> maybePlace = placeRepository.findById(place_id);
 
         if(maybePlace.isEmpty()){
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "수정할 여행지를 찾을 수 없습니다.");
         }
         Place foundPlace = maybePlace.get();
+        if (!foundPlace.getAccountId().equals(accountId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "여행지를 수정할 권한이 없습니다.");
+        }
+
         foundPlace.setTitle(request.getTitle());
         foundPlace.setContent(request.getContent());
         foundPlace.setCategory(request.getCategory());
@@ -127,13 +133,25 @@ public class PlaceController {
         return UpdatePlaceResponse.from(updatedPlace);
     }
 
+    // 여행지 삭제 API 구현 (인증받은 사용자만 여행지 삭제 가능)
+    @DeleteMapping("/{place_id}")
+    public ResponseEntity<?> deletePlace(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long place_id
+    ) {
+        log.info("Received request to delete a place");
+        String pureToken = extractToken(token);
+        Long accountId = accountClient.getAccountId("Bearer "+pureToken);
 
+        Place place = placeRepository.findById(place_id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾을 수 없습니다."));
 
+        if (!place.getAccountId().equals(accountId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "여행지를 삭제할 권한이 없습니다.");
+        }
 
-
-
-
-
-
+        placeRepository.delete(place);
+        return ResponseEntity.ok().body("여행지를 성공적으로 삭제했습니다.");
+    }
 
 }
