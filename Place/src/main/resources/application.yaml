@@ -1,6 +1,6 @@
 spring:
  application:
-  name: PLACE_DATA
+  name: Place
 
   datasource:
    url:
