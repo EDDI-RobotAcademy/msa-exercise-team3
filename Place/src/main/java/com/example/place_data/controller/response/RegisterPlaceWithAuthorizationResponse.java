@@ -11,15 +11,18 @@ public class RegisterPlaceWithAuthorizationResponse {
     private String location;
     private String address;
 
+    private Long accountId;
+
     public RegisterPlaceWithAuthorizationResponse() {}
 
-    public RegisterPlaceWithAuthorizationResponse(Long place_id, String title, String content, String category, String location, String address) {
+    public RegisterPlaceWithAuthorizationResponse(Long place_id, String title, String content, String category, String location, String address,Long accountId) {
         this.place_id = place_id;
         this.title = title;
         this.content = content;
         this.category = category;
         this.location = location;
         this.address = address;
+        this.accountId = accountId;
     }
 
     public static RegisterPlaceWithAuthorizationResponse from(Place place) {
@@ -29,7 +32,8 @@ public class RegisterPlaceWithAuthorizationResponse {
                 place.getContent(),
                 place.getCategory(),
                 place.getLocation(),
-                place.getAddress()
+                place.getAddress(),
+                place.getAccountId()
         );
     }
 }

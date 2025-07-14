@@ -15,8 +15,11 @@ public class RegisterPlaceWithAuthorizationRequest {
     private String location;
     private String address;
 
+    private Long accountId;
+
     public Place toRegister(Long accountId) {
-        return new Place(title, content, category, location, address);
+
+        return new Place(title, content, category, location, address, accountId);
     }
 
 }
