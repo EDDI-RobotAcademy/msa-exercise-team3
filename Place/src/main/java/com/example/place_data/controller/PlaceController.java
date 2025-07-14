@@ -8,16 +8,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/places")
 public class PlaceController {
 
-    @Autowired
-    private PlaceRepository placeRepository;
-    private fianl AccountClient accountClient;
+    private final PlaceRepository placeRepository;
+    private final AccountClient accountClient;
 
-    public PlaceController(AccountClient accountClient) {
+    public PlaceController(PlaceRepository placeRepository, AccountClient accountClient) {
+        this.placeRepository = placeRepository;
         this.accountClient = accountClient;
     }
 
@@ -47,5 +49,14 @@ public class PlaceController {
         }
         return token;
     }
+
+    // 여행지 목록 조회 API 구현
+    @GetMapping
+    public List<Place> listPlaces() {
+        log.info("Received request to list all places");
+        return placeRepository.findAll();
+    }
+
+
 
 }
