@@ -10,7 +10,8 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 
 public class Place {
     @Id
@@ -23,6 +24,8 @@ public class Place {
     private String location;
     private String address;
 
+    private Long accountId;
+
     public Place(String title, String content, String category, String location, String address) {
         this.title = title;
         this.content = content;
@@ -31,43 +34,12 @@ public class Place {
         this.address = address;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    public Place(String title, String content, String category, String location, String address, Long accountId) {
         this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
         this.address = address;
+        this.accountId = accountId;
     }
 }
