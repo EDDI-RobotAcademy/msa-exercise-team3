@@ -2,6 +2,7 @@ package com.example.recommend.service;
 
 import com.example.recommend.client.AccountClient;
 import com.example.recommend.client.PlaceClient;
+import com.example.recommend.dto.request.PlaceSearchRequest;
 import com.example.recommend.dto.request.RecommendKeywordRequestDto;
 import com.example.recommend.dto.request.RecommendLocationRequestDto;
 import com.example.recommend.dto.response.IdAccountResponseDto;
@@ -26,18 +27,21 @@ public class RecommendService {
      * - 사용자의 유효성을 검증 (토큰을 통해 FeignClient로 검증)
      * - 키워드 기반 추천 장소 리스트를 반환
      */
-    public List<PlaceResponseDto> recommendListKeyword(String pureToken, RecommendKeywordRequestDto keywordDto) {
+    public List<PlaceResponseDto> recommendListKeyword(String Token, PlaceSearchRequest keywordDto) {
         // 1. 로그인 사용자 유효성 검증 (단순 인증용)
-        accountClient.getAccountId("Bearer " + pureToken);
+//        accountClient.getAccountId("Bearer " + pureToken);
+        accountClient.getAccountId(Token);
         // 2. 키워드 기반 장소 리스트 반환
-        return placeClient.getPlacesByKeyword(keywordDto.getKeyword());
+
+        return placeClient.searchPlaces(keywordDto);
     }
 
-    public List<PlaceResponseDto> recommendListLocation(String pureToken, RecommendLocationRequestDto LocationDto) {
+    public List<PlaceResponseDto> recommendListLocation(String Token, PlaceSearchRequest LocationDto) {
         // 1. 로그인 사용자 유효성 검증 (단순 인증용)
-        accountClient.getAccountId("Bearer " + pureToken);
+//        accountClient.getAccountId("Bearer " + pureToken);
+        accountClient.getAccountId(Token);
         // 2. 지역 기반 장소 리스트 반환
-        return placeClient.getPlacesByLocation(LocationDto.getLocation());
+        return placeClient.searchPlaces(LocationDto);
     }
 
     /**
@@ -46,15 +50,16 @@ public class RecommendService {
      * - 키워드 기반 추천 장소를 조회
      * - 랜덤으로 하나 선택해서 추천
      */
-    public PlaceResponseDto recommendRandom(String pureToken, RecommendKeywordRequestDto keywordDto) {
-        // 1. 로그인 유저 정보 조회 (닉네임 포함)
-        IdAccountResponseDto account = accountClient.getAccountId("Bearer " + pureToken);
-        // 2. 키워드에 해당하는 장소 리스트 조회
-        List<PlaceResponseDto> places = placeClient.getPlacesByKeyword(keywordDto.getKeyword());
+    public PlaceResponseDto recommendRandom(String Token, PlaceSearchRequest keywordDto) {
+//        // 1. 로그인 유저 정보 조회 (닉네임 포함)
+//        IdAccountResponseDto account = accountClient.getAccountId("Bearer " + pureToken);
+//        // 2. 키워드에 해당하는 장소 리스트 조회
+        accountClient.getAccountId(Token);
+        List<PlaceResponseDto> places = placeClient.searchPlaces(keywordDto);
         // 3. 결과가 비어있을 경우 예외 처리
         if (places == null || places.isEmpty()) {
             // 아무것도 없으면 기본 메시지 반환
-            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "");
+            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "","",null);
         }
         return places.get(new Random().nextInt(places.size()));
     }
