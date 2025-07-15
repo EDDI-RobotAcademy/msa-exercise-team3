@@ -166,7 +166,7 @@ public class PlaceController {
 
 
     // 여행지 삭제 API 구현 (인증받은 사용자만 여행지 삭제 가능)
-    @DeleteMapping("/{place_id}")
+    @DeleteMapping("/delete/{place_id}")
     public ResponseEntity<?> deletePlace(
             @RequestHeader("Authorization") String token,
             @PathVariable Long place_id
