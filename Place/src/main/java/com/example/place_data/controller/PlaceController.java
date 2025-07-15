@@ -119,35 +119,51 @@ public class PlaceController {
     public UpdatePlaceResponse updatePlace(
             @RequestHeader("Authorization") String token,
             @RequestBody UpdatePlaceWithAuthorizationRequest request) {
+
         log.info("Received request to update a place");
+        log.info("Authorization header: {}", token);
 
-        // userToken 획득
         String pureToken = extractToken(token);
+        log.info("Extracted token: {}", pureToken);
 
-        // FeignClient를 통해 account 서비스에 accountId 요청
         IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증 토큰이 유효하지 않습니다.");
+        }
+
         Long accountId = response.getAccountId();
         log.info("accountId = {}", accountId);
 
         Long place_id = request.getPlace_id();
-        Optional<Place> maybePlace = placeRepository.findById(place_id);
+        if (place_id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "place_id가 null입니다.");
+        }
 
-        if(maybePlace.isEmpty()){
+        Optional<Place> maybePlace = placeRepository.findById(place_id);
+        if (maybePlace.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "수정할 여행지를 찾을 수 없습니다.");
         }
+
         Place foundPlace = maybePlace.get();
-        if (!foundPlace.getAccountId().equals(accountId)) {
+        if (foundPlace.getAccountId() == null || !foundPlace.getAccountId().equals(accountId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "여행지를 수정할 권한이 없습니다.");
         }
+
+        log.info("현재 로그인한 사용자 accountId = {}", accountId);
+        log.info("수정 대상 여행지의 accountId = {}", foundPlace.getAccountId());
 
         foundPlace.setTitle(request.getTitle());
         foundPlace.setContent(request.getContent());
         foundPlace.setCategory(request.getCategory());
         foundPlace.setLocation(request.getLocation());
         foundPlace.setAddress(request.getAddress());
+
         Place updatedPlace = placeRepository.save(foundPlace);
+        log.info("Updated place: {}", updatedPlace);
+
         return UpdatePlaceResponse.from(updatedPlace);
     }
+
 
     // 여행지 삭제 API 구현 (인증받은 사용자만 여행지 삭제 가능)
     @DeleteMapping("/{place_id}")
@@ -160,14 +176,14 @@ public class PlaceController {
         IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
         Long accountId = response.getAccountId();
 
-        Place place = placeRepository.findById(place_id)
+        Place foundPlace = placeRepository.findById(place_id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾을 수 없습니다."));
 
-        if (!place.getAccountId().equals(accountId)) {
+        if (!foundPlace.getAccountId().equals(accountId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "여행지를 삭제할 권한이 없습니다.");
         }
 
-        placeRepository.delete(place);
+        placeRepository.delete(foundPlace);
         return ResponseEntity.ok().body("여행지를 성공적으로 삭제했습니다.");
     }
 
