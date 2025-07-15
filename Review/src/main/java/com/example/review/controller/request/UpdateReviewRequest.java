@@ -5,19 +5,19 @@ import lombok.ToString;
 @ToString
 public class UpdateReviewRequest {
 
-    Long reviewId;
+    Long review_Id;
     String nickname;
     String reviewTitle;
     String reviewContent;
 
-    public UpdateReviewRequest(Long reviewId, String nickname, String reviewTitle, String reviewContent) {
-        this.reviewId = reviewId;
+    public UpdateReviewRequest(Long review_Id, String nickname, String reviewTitle, String reviewContent) {
+        this.review_Id = review_Id;
         this.reviewTitle = reviewTitle;
         this.reviewContent = reviewContent;
         this.nickname = nickname;
     }
     public Long getReviewId() {
-        return reviewId;
+        return review_Id;
     }
     public String getReviewTitle() {
         return reviewTitle;
@@ -26,9 +26,6 @@ public class UpdateReviewRequest {
         return reviewContent;
     }
 
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
-    }
 
     public void setReviewTitle(String reviewTitle) {
         this.reviewTitle = reviewTitle;

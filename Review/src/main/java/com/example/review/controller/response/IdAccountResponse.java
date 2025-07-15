@@ -3,24 +3,22 @@ package com.example.review.controller.response;
 public class IdAccountResponse {
 
     private Long accountId;
+    private String userId;
 
     public IdAccountResponse() {
     }
 
-    public IdAccountResponse(Long accountId) {
+    public IdAccountResponse(Long accountId, String userId) {
         this.accountId = accountId;
-    }
-
-    public static IdAccountResponse from(Long accountId) {
-        return new IdAccountResponse(accountId);
+        this.userId = userId;
     }
 
     public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public String getUserId() {
+        return userId;
     }
 
 }
