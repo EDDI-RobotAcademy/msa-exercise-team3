@@ -2,6 +2,7 @@ package com.example.account.controller;
 
 import com.example.account.controller.request.DeleteAccountRequest;
 import com.example.account.controller.request.RegisterAccountRequest;
+import com.example.account.controller.request.UpdateAccountRequest;
 import com.example.account.controller.response.*;
 import com.example.account.controller.request.LoginAccountRequest;
 import com.example.account.entity.Account;
@@ -125,7 +126,38 @@ public class AccountController {
     }
 
     // 사용자 정보 수정
-    @PostMapping
+    @PostMapping("/update")
+    public ResponseEntity<UpdateAccountResponse> update (
+            @RequestHeader("Authorization") String token,
+            @RequestBody UpdateAccountRequest request){
+        String pureToken = extractToken(token);
+        String accountId = redisCacheService.getValueByKey(pureToken, String.class);
+
+        if(accountId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Account account = accountRepository.findById(Long.parseLong(accountId))
+                .orElseThrow(()-> new RuntimeException("사용자가 존재하지 않음"));
+
+        // 기존 비밀번호 검증
+        if(!EncryptionUtility.matches(request.getCurrentPassword(), account.getPassword())){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new UpdateAccountResponse("현재 비밀번호가 일치하지 않습니다."));
+        }
+        // 새 비밀번호가 기존과 같은지 검증
+        if(request.getNewPassword().equals(request.getCurrentPassword())){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new UpdateAccountResponse("이전 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."));
+        }
+        // 수정
+        account.setPassword(EncryptionUtility.encode(request.getNewPassword()));
+        account.setNickName(request.getNewNickName());
+        accountRepository.save(account);
+
+        return  ResponseEntity.ok(new UpdateAccountResponse("회원 정보가 성공적으로 수정되었습니다."));
+    }
+
 
 
 }
