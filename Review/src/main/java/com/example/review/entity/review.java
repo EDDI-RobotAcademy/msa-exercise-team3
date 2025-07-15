@@ -1,9 +1,6 @@
 package com.example.review.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.ToString;
 
 
@@ -13,6 +10,7 @@ import lombok.ToString;
     public class Review {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "id")
 
         private Long review_id;
 
