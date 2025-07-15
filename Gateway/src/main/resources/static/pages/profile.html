@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script defer src="/js/profile.js"></script>
+</head>
+<body>
+<header class="top-nav">
+    <div class="logo">🏖 PlaceData</div>
+    <nav class="top-menu">
+        <button onclick="goToDashboard()">대시보드</button>
+        <button onclick="logout()">로그아웃</button>
+    </nav>
+</header>
+
+<main class="dashboard-main">
+    <h1>👤 마이페이지</h1>
+
+    <section class="profile-section">
+        <form id="profile-form">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" placeholder="닉네임 수정" />
+
+            <label for="password">비밀번호 변경</label>
+            <input type="password" id="password" placeholder="새 비밀번호" />
+
+            <button type="submit">정보 수정</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>
