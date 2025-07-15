@@ -3,11 +3,7 @@ package com.example.place_data.controller.request;
 import com.example.place_data.entity.Place;
 import lombok.*;
 
-@Setter
-@Getter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 public class RegisterPlaceWithAuthorizationRequest {
     private String title;
     private String content;
@@ -15,11 +11,58 @@ public class RegisterPlaceWithAuthorizationRequest {
     private String location;
     private String address;
 
-    private Long accountId;
+    public RegisterPlaceWithAuthorizationRequest(){}
+
+    public RegisterPlaceWithAuthorizationRequest(String title, String content, String category, String location, String address) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.location = location;
+        this.address = address;
+    }
 
     public Place toRegister(Long accountId) {
 
-        return new Place(title, content, category, location, address, accountId);
+        return new Place(title, content, category, location, address);
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

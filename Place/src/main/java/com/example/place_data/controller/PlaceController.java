@@ -4,6 +4,7 @@ import com.example.place_data.controller.client.AccountClient;
 import com.example.place_data.controller.request.PlaceSearchRequest;
 import com.example.place_data.controller.request.RegisterPlaceWithAuthorizationRequest;
 import com.example.place_data.controller.request.UpdatePlaceWithAuthorizationRequest;
+import com.example.place_data.controller.response.IdAccountResponse;
 import com.example.place_data.controller.response.RegisterPlaceWithAuthorizationResponse;
 import com.example.place_data.controller.response.UpdatePlaceResponse;
 import com.example.place_data.entity.Place;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/places")
+@RequestMapping("/place")
 public class PlaceController {
 
     private final PlaceRepository placeRepository;
@@ -47,7 +48,8 @@ public class PlaceController {
 
         Place requestedPlace = request.toRegister(accountId);
         Place registeredPlace = placeRepository.save(requestedPlace);
-        return RegisterPlaceWithAuthorizationResponse.from(registeredPlace);
+        String message = "여행지가 성공적으로 등록되었습니다.";
+        return RegisterPlaceWithAuthorizationResponse.from(registeredPlace, message);
     }
 
     private String extractToken(String token) {
@@ -141,7 +143,8 @@ public class PlaceController {
     ) {
         log.info("Received request to delete a place");
         String pureToken = extractToken(token);
-        Long accountId = accountClient.getAccountId("Bearer "+pureToken);
+        IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
+        Long accountId = response.getAccountId();
 
         Place place = placeRepository.findById(place_id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾을 수 없습니다."));
