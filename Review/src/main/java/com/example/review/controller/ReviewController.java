@@ -1,12 +1,16 @@
 package com.example.review.controller;
 
 import com.example.review.client.AccountClient;
+import com.example.review.client.PlaceClient;
 import com.example.review.controller.request.RegisterReviewRequest;
 import com.example.review.controller.request.UpdateReviewRequest;
 import com.example.review.controller.response.IdAccountResponse;
+import com.example.review.controller.response.RegisterReviewResponse;
+import com.example.review.controller.response.SearchPlaceResponse;
 import com.example.review.controller.response.UpdateReviewResponse;
 import com.example.review.entity.Review;
 import com.example.review.repository.ReviewRepository;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +25,32 @@ public class ReviewController {
     private ReviewRepository reviewRepository;
     @Autowired
     private AccountClient accountClient;
+    @Autowired
+    private PlaceClient placeClient;
 
     @PostMapping("/register")
-    public Review registerReview(@RequestBody RegisterReviewRequest register) {
+    public RegisterReviewResponse registerReview(
+            @RequestHeader(value = "Authorization", required = false) String authorization,
+            @RequestBody RegisterReviewRequest register) {
+
         log.info("Registering review -> request: {}", register);
-        Review registeredReview = register.toReview();
-        return reviewRepository.save(registeredReview);
+
+        if (register.getPlaceId() == null) {
+            throw new IllegalArgumentException("placeId는 필수입니다.");
+        }
+
+        try {
+            SearchPlaceResponse place = placeClient.getPlaceById(register.getPlaceId(), authorization);
+        } catch (FeignException.NotFound e) {
+            log.warn("Place not found: {}", register.getPlaceId());
+            throw new RuntimeException("존재하지 않는 여행지입니다.");
+        }
+
+        Review review = register.toReview();
+        Review saved = reviewRepository.save(review);
+        return RegisterReviewResponse.from(saved);
     }
+
 
     @PostMapping("/update")
     public UpdateReviewResponse updateReview(

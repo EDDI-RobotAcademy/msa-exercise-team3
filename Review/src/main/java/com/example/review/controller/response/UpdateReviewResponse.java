@@ -4,15 +4,15 @@ import com.example.review.entity.Review;
 
 public class UpdateReviewResponse {
 
-    private Long review_id;
+    private Long reviewId;
 
     private  String userId;
     private  String nickname;
     private  String reviewTitle;
     private  String reviewContent;
 
-    public UpdateReviewResponse(Long review_id, String userId, String nickname, String reviewTitle, String reviewContent) {
-        this.review_id = review_id;
+    public UpdateReviewResponse(Long reviewId, String userId, String nickname, String reviewTitle, String reviewContent) {
+        this.reviewId = reviewId;
         this.userId = userId;
         this.nickname = nickname;
         this.reviewTitle = reviewTitle;
@@ -20,10 +20,10 @@ public class UpdateReviewResponse {
     }
 
     public Long getId() {
-        return review_id;
+        return reviewId;
     }
     public void setId(Long id) {
-        this.review_id = review_id;
+        this.reviewId = reviewId;
     }
 
     public String getUserId() {
@@ -55,7 +55,7 @@ public class UpdateReviewResponse {
     }
     public static UpdateReviewResponse from(Review review) {
         return new UpdateReviewResponse(
-                review.getReview_id(),
+                review.getReviewId(),
                 review.getUserId(),
                 review.getNickname(),
                 review.getReviewTitle(),

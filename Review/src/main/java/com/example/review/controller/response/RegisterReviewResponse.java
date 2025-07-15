@@ -1,34 +1,29 @@
 package com.example.review.controller.response;
 
+import com.example.review.entity.Review;
+
 public class RegisterReviewResponse {
-    private Long id;
-    private String userId;
-    private String nickName;
-    private String reviewTitle;
-    private String reviewContent;
+    private String message;
+    private Long reviewId;
 
     public RegisterReviewResponse() {
-
     }
 
-    public RegisterReviewResponse(String userId, String nickName, String reviewTitle, String reviewContent) {
-
-        this.userId = userId;
-        this.nickName = nickName;
-        this.reviewTitle = reviewTitle;
-        this.reviewContent = reviewContent;
+    public RegisterReviewResponse(String message) {
+        this.message = message;
+    }
+    public static RegisterReviewResponse from(Review review) {
+        RegisterReviewResponse response = new RegisterReviewResponse();
+        response.reviewId = review.getReviewId();
+        response.message = "리뷰가 성공적으로 등록되었습니다.";
+        return response;
+    }
+    public String getMessage() {
+        return message;
+    }
+    public Long getReviewId() {
+        return reviewId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
 }
 
