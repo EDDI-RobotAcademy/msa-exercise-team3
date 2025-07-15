@@ -1,6 +1,6 @@
 package com.example.review.controller.request;
 
-import com.example.review.entity.review;
+import com.example.review.entity.Review;
 import lombok.ToString;
 
 @ToString
@@ -53,8 +53,8 @@ public class RegisterReviewRequest {
         this.reviewContent = reviewContent;
     }
 
-    public review toReview() {
-        return new review(userId, nickname, reviewTitle, reviewContent);
+    public Review toReview() {
+        return new Review(userId, nickname, reviewTitle, reviewContent);
     }
 
 }
