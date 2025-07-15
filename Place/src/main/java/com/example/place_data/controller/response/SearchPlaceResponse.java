@@ -1,19 +1,23 @@
-package com.example.place_data.controller.request;
+package com.example.place_data.controller.response;
 
 import com.example.place_data.entity.Place;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@ToString
-public class RegisterPlaceWithAuthorizationRequest {
+import java.util.List;
+
+public class SearchPlaceResponse {
     private String title;
     private String content;
     private String category;
     private String location;
     private String address;
 
-    public RegisterPlaceWithAuthorizationRequest(){}
+    public SearchPlaceResponse(){}
 
-    public RegisterPlaceWithAuthorizationRequest(String title, String content, String category, String location, String address) {
+    public SearchPlaceResponse(String title, String content, String category, String location, String address) {
         this.title = title;
         this.content = content;
         this.category = category;
@@ -21,9 +25,20 @@ public class RegisterPlaceWithAuthorizationRequest {
         this.address = address;
     }
 
-    public Place toRegister(Long accountId) {
+    public static SearchPlaceResponse from(Place place) {
+        return new SearchPlaceResponse(
+                place.getTitle(),
+                place.getContent(),
+                place.getCategory(),
+                place.getLocation(),
+                place.getAddress()
+        );
+    }
 
-        return new Place(title, content, category, location, address);
+    public static List<SearchPlaceResponse> from(List<Place> places) {
+        return places.stream()
+                .map(SearchPlaceResponse::from)
+                .toList();
     }
 
     public String getTitle() {

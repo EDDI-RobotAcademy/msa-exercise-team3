@@ -5,35 +5,36 @@ import com.example.place_data.entity.Place;
 public class RegisterPlaceWithAuthorizationResponse {
 
     private Long place_id;
-    private String title;
-    private String content;
-    private String category;
-    private String location;
-    private String address;
+    private String message;
 
-    private Long accountId;
-
-    public RegisterPlaceWithAuthorizationResponse() {}
-
-    public RegisterPlaceWithAuthorizationResponse(Long place_id, String title, String content, String category, String location, String address,Long accountId) {
-        this.place_id = place_id;
-        this.title = title;
-        this.content = content;
-        this.category = category;
-        this.location = location;
-        this.address = address;
-        this.accountId = accountId;
+    RegisterPlaceWithAuthorizationResponse() {
     }
 
-    public static RegisterPlaceWithAuthorizationResponse from(Place place) {
+    public RegisterPlaceWithAuthorizationResponse(Long place_id, String message) {
+        this.place_id = place_id;
+        this.message = message;
+    }
+
+    public Long getPlace_id() {
+        return place_id;
+    }
+
+    public void setPlace_id(Long place_id) {
+        this.place_id = place_id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public static RegisterPlaceWithAuthorizationResponse from(Place place, String message) {
         return new RegisterPlaceWithAuthorizationResponse(
                 place.getPlace_id(),
-                place.getTitle(),
-                place.getContent(),
-                place.getCategory(),
-                place.getLocation(),
-                place.getAddress(),
-                place.getAccountId()
+                message
         );
     }
 }
