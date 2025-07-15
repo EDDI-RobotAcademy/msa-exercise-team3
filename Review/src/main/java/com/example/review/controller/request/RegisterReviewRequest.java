@@ -5,6 +5,7 @@ import lombok.ToString;
 
 @ToString
 public class RegisterReviewRequest {
+    private Long placeId;
 
     private String userId;
     private String nickname;
@@ -14,11 +15,21 @@ public class RegisterReviewRequest {
     public RegisterReviewRequest() {
 
     }
-    public RegisterReviewRequest(String userId, String nickname, String reviewTitle, String reviewContent) {
+
+    public RegisterReviewRequest(Long placeId, String userId, String nickname, String reviewTitle, String reviewContent) {
+        this.placeId = placeId;
         this.userId = userId;
         this.nickname = nickname;
         this.reviewTitle = reviewTitle;
         this.reviewContent = reviewContent;
+    }
+
+    public Long getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(Long placeId) {
+        this.placeId = placeId;
     }
 
     public String getUserId() {
@@ -52,9 +63,7 @@ public class RegisterReviewRequest {
     public void setReviewContent(String reviewContent) {
         this.reviewContent = reviewContent;
     }
-
     public Review toReview() {
-        return new Review(userId, nickname, reviewTitle, reviewContent);
+        return new Review(userId, nickname, reviewTitle, reviewContent, placeId);
     }
-
 }

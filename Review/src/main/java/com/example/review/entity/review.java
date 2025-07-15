@@ -11,36 +11,40 @@ import lombok.ToString;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id")
+        
+            private Long reviewId;
+            private String userId;
+            private String nickname;
+            private String reviewTitle;
+            private String reviewContent;
+            private Long placeId;  // 추가
 
-        private Long review_id;
-
-        private String userId;
-        private String nickname;
-        private String reviewTitle;
-        private String reviewContent;
-
-        public Review(String userId, String nickname, String reviewTitle, String reviewContent) {
-            this.userId = userId;
-            this.nickname = nickname;
-            this.reviewTitle = reviewTitle;
-            this.reviewContent = reviewContent;
-        }
+            public Review(String userId, String nickname, String reviewTitle, String reviewContent, Long placeId) {
+                this.userId = userId;
+                this.nickname = nickname;
+                this.reviewTitle = reviewTitle;
+                this.reviewContent = reviewContent;
+                this.placeId = placeId;
+            }
 
         public Review() {
-        }
-
-        public Long getReview_id() {
-            return review_id;
         }
 
         public String getUserId() {
             return userId;
         }
 
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
         public String getNickname() {
             return nickname;
         }
 
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
 
         public String getReviewTitle() {
             return reviewTitle;
@@ -58,8 +62,17 @@ import lombok.ToString;
             this.reviewContent = reviewContent;
         }
 
+        public Long getPlaceId() {
+            return placeId;
+        }
 
+        public void setPlaceId(Long placeId) {
 
+        }
+
+        public Long getReviewId() {
+                return reviewId;
+        }
     }
 
 

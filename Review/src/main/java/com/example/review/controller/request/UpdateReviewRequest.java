@@ -5,34 +5,24 @@ import lombok.ToString;
 @ToString
 public class UpdateReviewRequest {
 
-    Long review_Id;
-    String nickname;
-    String reviewTitle;
-    String reviewContent;
+    private Long reviewId;
+    private String nickname;
+    private String reviewTitle;
+    private String reviewContent;
 
-    public UpdateReviewRequest(Long review_Id, String nickname, String reviewTitle, String reviewContent) {
-        this.review_Id = review_Id;
+    public UpdateReviewRequest(Long reviewId, String nickname, String reviewTitle, String reviewContent) {
+        this.reviewId = reviewId;
         this.reviewTitle = reviewTitle;
         this.reviewContent = reviewContent;
         this.nickname = nickname;
     }
+
     public Long getReviewId() {
-        return review_Id;
-    }
-    public String getReviewTitle() {
-        return reviewTitle;
-    }
-    public String getReviewContent() {
-        return reviewContent;
+        return reviewId;
     }
 
-
-    public void setReviewTitle(String reviewTitle) {
-        this.reviewTitle = reviewTitle;
-    }
-
-    public void setReviewContent(String reviewContent) {
-        this.reviewContent = reviewContent;
+    public void setReviewId(Long reviewId) {
+        this.reviewId = reviewId;
     }
 
     public String getNickname() {
@@ -43,4 +33,19 @@ public class UpdateReviewRequest {
         this.nickname = nickname;
     }
 
+    public String getReviewTitle() {
+        return reviewTitle;
+    }
+
+    public void setReviewTitle(String reviewTitle) {
+        this.reviewTitle = reviewTitle;
+    }
+
+    public String getReviewContent() {
+        return reviewContent;
+    }
+
+    public void setReviewContent(String reviewContent) {
+        this.reviewContent = reviewContent;
+    }
 }
