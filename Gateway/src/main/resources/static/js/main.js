@@ -10,11 +10,15 @@ async function login() {
             // 'password' 입력창의 값을 가져와 요청에 포함
             password: document.getElementById('password').value
         });
-
+        const nickNameResponse = await axios.get('/api/account/my-profile', {
+            headers: {
+                Authorization: `Bearer ${response.data.userToken}`
+            }
+        });
         // 📌 서버로부터 받은 응답 객체에서 토큰 값을 추출
         // 일반적으로 백엔드는 로그인 성공 시 JWT 토큰을 반환함
         localStorage.setItem("userToken", response.data.userToken);
-        localStorage.setItem("nickName", nickName);
+        localStorage.setItem("nickName", nickNameResponse.data.nickName);
         // 로그인 성공 후 다른 페이지로 이동
         window.location.href = "/pages/dashboard.html"; // 새 HTML 페이지로 이동
 

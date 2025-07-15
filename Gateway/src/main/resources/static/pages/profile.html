@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/profile.css">
     <script defer src="/js/profile.js"></script>
 </head>
 <body>
@@ -25,24 +25,38 @@
     <!-- ✅ 오른쪽 컨텐츠 영역 -->
     <div class="content-area">
         <!-- 🔁 회원정보 수정 폼 -->
-        <section id="edit-section" class="profile-section">
-            <h2>회원정보 수정</h2>
-            <form id="profile-form">
-                <label for="nickname">새 닉네임</label>
-                <input type="text" id="nickname" placeholder="변경할 닉네임 입력" />
+        <!-- ✅ 회원정보 수정 섹션 -->
+        <section id="edit" class="tab-section hidden">
+            <div class="tab-flex">
+                <div class="content-area">
+                    <form id="profile-form" class="place-form active">
+                        <h2>🛠 회원정보 수정</h2>
 
-                <label for="current-password">현재 비밀번호</label>
-                <input type="password" id="current-password" placeholder="현재 비밀번호" required />
+                        <div class="form-group">
+                            <label for="edit-nickname">✨ 새 닉네임</label>
+                            <input type="text" id="edit-nickname" placeholder="변경할 닉네임 입력" />
+                        </div>
 
-                <label for="new-password">새 비밀번호</label>
-                <input type="password" id="new-password" placeholder="새 비밀번호" required />
+                        <div class="form-group">
+                            <label for="edit-current-password">🔒 현재 비밀번호</label>
+                            <input type="password" id="edit-current-password" placeholder="현재 비밀번호 입력" required />
+                        </div>
 
-                <button type="submit">정보 수정</button>
-            </form>
+                        <div class="form-group">
+                            <label for="edit-new-password">🆕 새 비밀번호</label>
+                            <input type="password" id="edit-new-password" placeholder="새 비밀번호 입력" required />
+                        </div>
+
+                        <button type="submit" class="primary">✅ 정보 수정</button>
+
+                        <div id="profile-update-result" class="result-box"></div>
+                    </form>
+                </div>
+            </div>
         </section>
 
-        <!-- 🔁 회원탈퇴 폼 -->
-        <section id="delete-section" class="profile-section hidden">
+        <!-- ✅ 회원탈퇴 섹션 -->
+        <section id="delete" class="profile-section hidden">
             <h2>회원탈퇴</h2>
             <p>정말 탈퇴하시겠습니까? 😢</p>
             <form id="delete-form">
@@ -50,7 +64,9 @@
                 <input type="password" id="delete-password" placeholder="현재 비밀번호" required />
                 <button type="submit" class="danger">탈퇴하기</button>
             </form>
+            <div id="delete-result" class="result-text"></div>
         </section>
+
     </div>
 </main>
 </body>

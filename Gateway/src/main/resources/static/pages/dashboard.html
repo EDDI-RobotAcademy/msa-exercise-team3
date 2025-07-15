@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>회원 대시보드</title>
     <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="/js/dashboard.js"></script>
     <script defer src="/js/placeRegister.js"></script>
     <script defer src="/js/placeManage.js"></script>
@@ -134,7 +135,137 @@
 
             <!-- 🔽 오른쪽: 동적 컨텐츠 영역 -->
             <div class="content-area" id="place-manage-content">
-                <p>🛠 원하는 기능을 왼쪽에서 선택하세요.</p>
+                <div id="place-form-register" class="place-form">
+                    <h3>여행지 등록</h3>
+                    <input type="text" id="register-title" placeholder="제목" />
+                    <select id="register-category">
+                        <option value="">카테고리 선택</option>
+                        <option value="CULTURE">문화 (CULTURE)</option>
+                        <option value="ACTIVITY">액티비티 (ACTIVITY)</option>
+                        <option value="NATURE">자연 (NATURE)</option>
+                        <option value="SHOPPING">쇼핑 (SHOPPING)</option>
+                        <option value="TRANSPORT">교통 (TRANSPORT)</option>
+                    </select>
+                    <select id="register-location">
+                        <option value="">지역 선택</option>
+                        <option value="강원특별자치도">강원특별자치도</option>
+                        <option value="경기도">경기도</option>
+                        <option value="경상남도">경상남도</option>
+                        <option value="경상북도">경상북도</option>
+                        <option value="광주광역시">광주광역시</option>
+                        <option value="대구광역시">대구광역시</option>
+                        <option value="대전광역시">대전광역시</option>
+                        <option value="부산광역시">부산광역시</option>
+                        <option value="서울특별시">서울특별시</option>
+                        <option value="세종특별자치시">세종특별자치시</option>
+                        <option value="울산광역시">울산광역시</option>
+                        <option value="인천광역시">인천광역시</option>
+                        <option value="전라남도">전라남도</option>
+                        <option value="전북특별자치도">전북특별자치도</option>
+                        <option value="제주특별자치도">제주특별자치도</option>
+                        <option value="충청남도">충청남도</option>
+                        <option value="충청북도">충청북도</option>
+                    </select>
+
+                    <input type="text" id="register-content" placeholder="설명" />
+
+                    <input type="text" id="register-address" placeholder="주소" />
+
+                    <button onclick="registerPlace()">등록하기</button>
+                </div>
+
+                <div id="place-form-list" class="place-form">
+                    <h3>전체 여행지 목록</h3>
+                    <button onclick="getAllPlaces()">조회</button>
+                    <div id="place-list-result"></div>
+                </div>
+
+                <div id="place-form-detail" class="place-form">
+                    <h3>ID로 상세 조회</h3>
+                    <input type="text" id="detail-id" placeholder="place_id 입력" />
+                    <button onclick="getPlaceById()">조회</button>
+                    <div id="place-detail-result"></div>
+                </div>
+
+                <div id="place-form-search" class="place-form">
+                    <h3>조건 검색</h3>
+                    <input type="text" id="search-title" placeholder="타이틀 (선택)" />
+                    <select id="search-category">
+                        <option value="">카테고리 선택</option>
+                        <option value="CULTURE">문화 (CULTURE)</option>
+                        <option value="ACTIVITY">액티비티 (ACTIVITY)</option>
+                        <option value="NATURE">자연 (NATURE)</option>
+                        <option value="SHOPPING">쇼핑 (SHOPPING)</option>
+                        <option value="TRANSPORT">교통 (TRANSPORT)</option>
+                    </select>
+
+                    <select id="search-location">
+                        <option value="">지역 선택</option>
+                        <option value="강원특별자치도">강원특별자치도</option>
+                        <option value="경기도">경기도</option>
+                        <option value="경상남도">경상남도</option>
+                        <option value="경상북도">경상북도</option>
+                        <option value="광주광역시">광주광역시</option>
+                        <option value="대구광역시">대구광역시</option>
+                        <option value="대전광역시">대전광역시</option>
+                        <option value="부산광역시">부산광역시</option>
+                        <option value="서울특별시">서울특별시</option>
+                        <option value="세종특별자치시">세종특별자치시</option>
+                        <option value="울산광역시">울산광역시</option>
+                        <option value="인천광역시">인천광역시</option>
+                        <option value="전라남도">전라남도</option>
+                        <option value="전북특별자치도">전북특별자치도</option>
+                        <option value="제주특별자치도">제주특별자치도</option>
+                        <option value="충청남도">충청남도</option>
+                        <option value="충청북도">충청북도</option>
+                    </select>
+                    <button onclick="searchPlace()">검색</button>
+                    <div id="place-search-result"></div>
+                </div>
+
+                <div id="place-form-update" class="place-form">
+                    <h3>여행지 수정</h3>
+                    <input type="text" id="update-id" placeholder="수정할 place_id" />
+                    <input type="text" id="update-title" placeholder="새 타이틀" />
+                    <select id="update-category">
+                        <option value="">카테고리 선택</option>
+                        <option value="CULTURE">문화 (CULTURE)</option>
+                        <option value="ACTIVITY">액티비티 (ACTIVITY)</option>
+                        <option value="NATURE">자연 (NATURE)</option>
+                        <option value="SHOPPING">쇼핑 (SHOPPING)</option>
+                        <option value="TRANSPORT">교통 (TRANSPORT)</option>
+                    </select>
+
+                    <select id="update-location">
+                        <option value="">지역 선택</option>
+                        <option value="강원특별자치도">강원특별자치도</option>
+                        <option value="경기도">경기도</option>
+                        <option value="경상남도">경상남도</option>
+                        <option value="경상북도">경상북도</option>
+                        <option value="광주광역시">광주광역시</option>
+                        <option value="대구광역시">대구광역시</option>
+                        <option value="대전광역시">대전광역시</option>
+                        <option value="부산광역시">부산광역시</option>
+                        <option value="서울특별시">서울특별시</option>
+                        <option value="세종특별자치시">세종특별자치시</option>
+                        <option value="울산광역시">울산광역시</option>
+                        <option value="인천광역시">인천광역시</option>
+                        <option value="전라남도">전라남도</option>
+                        <option value="전북특별자치도">전북특별자치도</option>
+                        <option value="제주특별자치도">제주특별자치도</option>
+                        <option value="충청남도">충청남도</option>
+                        <option value="충청북도">충청북도</option>
+                    </select>
+                    <input type="text" id="update-content" placeholder="새 내용" />
+                    <input type="text" id="update-address" placeholder="새 주소" />
+                    <button onclick="updatePlace()">수정하기</button>
+                </div>
+
+                <div id="place-form-delete" class="place-form">
+                    <h3>여행지 삭제</h3>
+                    <input type="text" id="delete-id" placeholder="삭제할 place_id" />
+                    <button onclick="deletePlace()">삭제하기</button>
+                </div>
             </div>
         </div>
     </section>
