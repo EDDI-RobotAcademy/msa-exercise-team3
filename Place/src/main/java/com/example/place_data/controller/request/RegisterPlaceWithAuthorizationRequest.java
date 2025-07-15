@@ -22,8 +22,14 @@ public class RegisterPlaceWithAuthorizationRequest {
     }
 
     public Place toRegister(Long accountId) {
-
-        return new Place(title, content, category, location, address);
+        Place place = new Place();
+        place.setTitle(this.title);
+        place.setContent(this.content);
+        place.setCategory(this.category);
+        place.setLocation(this.location);
+        place.setAddress(this.address);
+        place.setAccountId(accountId);
+        return place;
     }
 
     public String getTitle() {
