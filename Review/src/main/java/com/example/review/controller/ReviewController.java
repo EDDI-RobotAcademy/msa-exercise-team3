@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -29,21 +28,24 @@ public class ReviewController {
         Review registeredReview = register.toReview();
         return reviewRepository.save(registeredReview);
     }
+
     @PostMapping("/update")
     public UpdateReviewResponse updateReview(
             @RequestHeader("Authorization") String token,
             @RequestBody UpdateReviewRequest update) {
-        log.info("Updating review -> request: {}", update);
+
         String pureToken = extractToken(token);
         IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
-        Long accountId = response.getAccountId();
 
-        Long updateReviewId = update.getReviewId();
-        Review foundReview = reviewRepository.findById(updateReviewId)
+        String requestUserId = response.getUserId();
+
+        Review foundReview = reviewRepository.findById(update.getReviewId())
                 .orElseThrow(() -> new RuntimeException("해당 리뷰는 존재하지 않습니다."));
-        if(!foundReview.getAccountId().equals(accountId)){
-            throw new RuntimeException("작성자 본인만 수정할 수 있습니다.");
+
+        if (!foundReview.getUserId().equals(requestUserId)) {
+            return null;
         }
+
         foundReview.setReviewContent(update.getReviewContent());
         foundReview.setReviewTitle(update.getReviewTitle());
 
@@ -56,6 +58,7 @@ public class ReviewController {
         }
         return token;
     }
+
 
     @GetMapping("/list")
     public List<Review> readAllReviews() {

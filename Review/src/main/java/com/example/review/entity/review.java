@@ -14,13 +14,12 @@ import lombok.ToString;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-        private Long id;
+        private Long review_id;
 
         private String userId;
         private String nickname;
         private String reviewTitle;
         private String reviewContent;
-        private Long accountId;
 
         public Review(String userId, String nickname, String reviewTitle, String reviewContent) {
             this.userId = userId;
@@ -32,29 +31,18 @@ import lombok.ToString;
         public Review() {
         }
 
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
+        public Long getReview_id() {
+            return review_id;
         }
 
         public String getUserId() {
             return userId;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
         public String getNickname() {
             return nickname;
         }
 
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
-        }
 
         public String getReviewTitle() {
             return reviewTitle;
@@ -72,21 +60,8 @@ import lombok.ToString;
             this.reviewContent = reviewContent;
         }
 
-        public Review(String userId, String nickname, String reviewTitle, String reviewContent, Long accountId) {
-            this.userId = userId;
-            this.nickname = nickname;
-            this.reviewTitle = reviewTitle;
-            this.reviewContent = reviewContent;
-            this.accountId = accountId;
-        }
 
-        public Long getAccountId() {
-            return accountId;
-        }
 
-        public void setAccountId(Long accountId) {
-            this.accountId = accountId;
-        }
     }
 
 
