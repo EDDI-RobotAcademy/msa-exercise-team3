@@ -10,7 +10,7 @@ import lombok.ToString;
     @Entity
     @ToString
 
-    public class review {
+    public class Review {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
 
@@ -22,14 +22,14 @@ import lombok.ToString;
         private String reviewContent;
         private Long accountId;
 
-        public review(String userId, String nickname, String reviewTitle, String reviewContent) {
+        public Review(String userId, String nickname, String reviewTitle, String reviewContent) {
             this.userId = userId;
             this.nickname = nickname;
             this.reviewTitle = reviewTitle;
             this.reviewContent = reviewContent;
         }
 
-        public review() {
+        public Review() {
         }
 
         public Long getId() {
@@ -72,7 +72,7 @@ import lombok.ToString;
             this.reviewContent = reviewContent;
         }
 
-        public review(String userId, String nickname, String reviewTitle, String reviewContent, Long accountId) {
+        public Review(String userId, String nickname, String reviewTitle, String reviewContent, Long accountId) {
             this.userId = userId;
             this.nickname = nickname;
             this.reviewTitle = reviewTitle;

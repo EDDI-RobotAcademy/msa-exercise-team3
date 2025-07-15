@@ -1,5 +1,6 @@
 package com.example.review.controller.response;
 
+import com.example.review.entity.Review;
 import com.example.review.entity.review;
 
 public class UpdateReviewResponse {
@@ -53,7 +54,7 @@ public class UpdateReviewResponse {
     public void setReviewContent(String reviewContent) {
         this.reviewContent = reviewContent;
     }
-    public static UpdateReviewResponse from(review review) {
+    public static UpdateReviewResponse from(Review review) {
         return new UpdateReviewResponse(
                 review.getId(),
                 review.getUserId(),
