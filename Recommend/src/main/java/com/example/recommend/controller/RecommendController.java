@@ -4,7 +4,7 @@ import com.example.recommend.dto.request.PlaceSearchRequest;
 import com.example.recommend.dto.request.RecommendKeywordRequestDto;
 import com.example.recommend.dto.request.RecommendLocationRequestDto;
 import com.example.recommend.dto.response.PlaceResponseDto;
-import com.example.recommend.dto.response.RecommendResultResponse;
+//import com.example.recommend.dto.response.RecommendResultResponse;
 import com.example.recommend.service.RecommendService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
