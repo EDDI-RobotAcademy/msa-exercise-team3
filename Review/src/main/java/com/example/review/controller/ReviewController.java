@@ -5,13 +5,13 @@ import com.example.review.controller.request.RegisterReviewRequest;
 import com.example.review.controller.request.UpdateReviewRequest;
 import com.example.review.controller.response.IdAccountResponse;
 import com.example.review.controller.response.UpdateReviewResponse;
-import com.example.review.entity.review;
-import com.example.review.repository.reviewRepository;
+import com.example.review.entity.Review;
+import com.example.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -19,14 +19,14 @@ import java.util.List;
 
 public class ReviewController {
     @Autowired
-    private reviewRepository reviewRepository;
+    private ReviewRepository reviewRepository;
     @Autowired
     private AccountClient accountClient;
 
     @PostMapping("/register")
-    public review registerReview(@RequestBody RegisterReviewRequest register) {
+    public Review registerReview(@RequestBody RegisterReviewRequest register) {
         log.info("Registering review -> request: {}", register);
-        review registeredReview = register.toReview();
+        Review registeredReview = register.toReview();
         return reviewRepository.save(registeredReview);
     }
     @PostMapping("/update")
@@ -39,7 +39,7 @@ public class ReviewController {
         Long accountId = response.getAccountId();
 
         Long updateReviewId = update.getReviewId();
-        review foundReview = reviewRepository.findById(updateReviewId)
+        Review foundReview = reviewRepository.findById(updateReviewId)
                 .orElseThrow(() -> new RuntimeException("해당 리뷰는 존재하지 않습니다."));
         if(!foundReview.getAccountId().equals(accountId)){
             throw new RuntimeException("작성자 본인만 수정할 수 있습니다.");
@@ -47,7 +47,7 @@ public class ReviewController {
         foundReview.setReviewContent(update.getReviewContent());
         foundReview.setReviewTitle(update.getReviewTitle());
 
-        review updatedReview = reviewRepository.save(foundReview);
+        Review updatedReview = reviewRepository.save(foundReview);
         return UpdateReviewResponse.from(updatedReview);
     }
     private String extractToken(String token) {
@@ -58,15 +58,18 @@ public class ReviewController {
     }
 
     @GetMapping("/list")
-    public List<review> readAllReviews() {
+    public List<Review> readAllReviews() {
         log.info("Reading all reviews");
         return reviewRepository.findAll();
     }
+    @GetMapping("/read/{nickname}")
+    public List<Review> readByNickname(@PathVariable String nickname) {
+        log.info("Reading reviews by nickname: {}", nickname);
+        return reviewRepository.findAllByNickname(nickname);
+    }
 
 
-
-
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteReview(@RequestParam Long reviewId) {
         log.info("Delete review -> reviewId: {}", reviewId);
         reviewRepository.deleteById(reviewId);
