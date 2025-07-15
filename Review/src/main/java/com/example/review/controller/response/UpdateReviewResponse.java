@@ -1,19 +1,18 @@
 package com.example.review.controller.response;
 
 import com.example.review.entity.Review;
-import com.example.review.entity.review;
 
 public class UpdateReviewResponse {
 
-    private Long id;
+    private Long review_id;
 
     private  String userId;
     private  String nickname;
     private  String reviewTitle;
     private  String reviewContent;
 
-    public UpdateReviewResponse(Long id, String userId, String nickname, String reviewTitle, String reviewContent) {
-        this.id = id;
+    public UpdateReviewResponse(Long review_id, String userId, String nickname, String reviewTitle, String reviewContent) {
+        this.review_id = review_id;
         this.userId = userId;
         this.nickname = nickname;
         this.reviewTitle = reviewTitle;
@@ -21,10 +20,10 @@ public class UpdateReviewResponse {
     }
 
     public Long getId() {
-        return id;
+        return review_id;
     }
     public void setId(Long id) {
-        this.id = id;
+        this.review_id = review_id;
     }
 
     public String getUserId() {
@@ -56,7 +55,7 @@ public class UpdateReviewResponse {
     }
     public static UpdateReviewResponse from(Review review) {
         return new UpdateReviewResponse(
-                review.getId(),
+                review.getReview_id(),
                 review.getUserId(),
                 review.getNickname(),
                 review.getReviewTitle(),
