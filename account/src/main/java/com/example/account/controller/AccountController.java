@@ -2,11 +2,8 @@ package com.example.account.controller;
 
 import com.example.account.controller.request.DeleteAccountRequest;
 import com.example.account.controller.request.RegisterAccountRequest;
-import com.example.account.controller.response.DeleteAccountResponse;
-import com.example.account.controller.response.IdAccountResponse;
-import com.example.account.controller.response.LoginAccountResponse;
+import com.example.account.controller.response.*;
 import com.example.account.controller.request.LoginAccountRequest;
-import com.example.account.controller.response.RegisterAccountResponse;
 import com.example.account.entity.Account;
 import com.example.account.redis_cache.RedisCacheService;
 import com.example.account.repository.AccountRepository;
@@ -18,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -109,6 +107,25 @@ public class AccountController {
 
         return ResponseEntity.ok(new DeleteAccountResponse("회원 탈퇴가 완료되었습니다."));
     }
+
+    @GetMapping("/my-profile")
+    public ResponseEntity<?> getMyProfile(
+            @RequestHeader("Authorization")String token){
+        String pureToken = extractToken(token);
+        String accountId = redisCacheService.getValueByKey(pureToken, String.class);
+
+        if(accountId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message","로그인이 안된 상태에서는 접근이 제한됩니다."));
+        }
+        Account account = accountRepository.findById(Long.parseLong(accountId))
+                .orElseThrow(()-> new RuntimeException("사용자가 존재하지 않음"));
+
+        return ResponseEntity.ok(MyProfileAccountResponse.from(account));
+    }
+
+    // 사용자 정보 수정
+    @PostMapping
 
 
 }
