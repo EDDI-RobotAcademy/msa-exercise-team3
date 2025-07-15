@@ -36,39 +36,105 @@ function showTab(tabName) {
 
 }
 
-// ✅ 국내여행지 검색 기능
-function searchDomestic() {
+// ✅ 국내여행지 검색 기능 (백엔드 연동)
+async function searchDomestic() {
     const title = document.getElementById("domestic-title").value.trim();
     const category = document.getElementById("domestic-category").value.trim();
     const location = document.getElementById("domestic-location").value.trim();
     const resultBox = document.getElementById("domestic-result");
 
+    // // ✅ 입력값 확인
     // if (!title || !category || !location) {
     //     resultBox.textContent = "모든 값을 입력해주세요.";
     //     return;
     // }
 
-    // ✨ 가상의 결과 출력
-    resultBox.textContent =
-        `📌 [${location}]에서 '${category}' 유형의 장소 "${title}"에 대한 결과를 검색했습니다.`;
-}
+    try {
+        const token = localStorage.getItem("userToken"); // 토큰 가져오기
 
+        const response = await axios.post("/api/place/search", {
+            title,
+            category,
+            location
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = response.data;
+
+        // ✅ 결과 출력 (리스트 형태 가정)
+        if (Array.isArray(data) && data.length > 0) {
+            const listHtml = data.map(place =>
+                `<li>📍 ${place.title} (${place.location} - ${place.category})</li>`
+            ).join("");
+
+            resultBox.innerHTML = `<ul>${listHtml}</ul>`;
+        } else {
+            resultBox.textContent = "검색 결과가 없습니다.";
+        }
+
+    } catch (error) {
+        console.error("검색 실패:", error);
+        resultBox.textContent = "검색 중 오류가 발생했습니다.";
+    }
+}
 // ✅ 랜덤여행지 추천 기능
-function searchRandom() {
+async function searchRandom() {
     const title = document.getElementById("random-title").value.trim();
     const category = document.getElementById("random-category").value.trim();
     const location = document.getElementById("random-location").value.trim();
     const resultBox = document.getElementById("random-result");
 
-    // if (!category || !location) {
-    //     resultBox.textContent = "카테고리와 지역을 모두 입력해주세요.";
-    //     return;
-    // }
+    try {
+        const token = localStorage.getItem("userToken"); // 토큰 가져오기
 
-    // ✨ 가상의 랜덤 결과 출력
-    const samplePlaces = ["제주도", "부산 해운대", "여수 낭만포차", "강릉 안목해변", "속초 중앙시장"];
-    const randomPlace = samplePlaces[Math.floor(Math.random() * samplePlaces.length)];
+        const response = await axios.post("/api/place/search", {
+            title,
+            category,
+            location
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
 
-    resultBox.textContent =
-        `🎲 [${location}] 지역에서 '${category}' 테마로 추천된 여행지: ${randomPlace}`;
+        const data = response.data;
+
+        // ✅ 결과 출력 (랜덤 하나만 선택)
+        if (Array.isArray(data) && data.length > 0) {
+            const randomIndex = Math.floor(Math.random() * data.length);
+            const place = data[randomIndex];
+
+            resultBox.innerHTML = `
+                <div>
+                    <h3>✨ 랜덤 추천 장소</h3>
+                    <p>📍 <strong>${place.title}</strong></p>
+                    <p>📍 위치: ${place.location}</p>
+                    <p>📁 카테고리: ${place.category}</p>
+                </div>
+            `;
+        } else {
+            resultBox.textContent = "추천 결과가 없습니다.";
+        }
+
+    } catch (error) {
+        console.error("검색 실패:", error);
+        resultBox.textContent = "추천 중 오류가 발생했습니다.";
+    }
+}
+// 🔁 왼쪽 버튼 클릭 시 해당 입력 폼 보여주기
+function showPlaceView(action) {
+    // 전체 폼 숨기기
+    document.querySelectorAll(".place-form").forEach(form => form.style.display = "none");
+
+    // 선택된 폼만 보여주기
+    const targetId = `place-form-${action}`;
+    const targetForm = document.getElementById(targetId);
+    if (targetForm) {
+        targetForm.style.display = "block";
+    }
 }

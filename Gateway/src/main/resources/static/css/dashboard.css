@@ -103,11 +103,11 @@ body {
     font-size: 1rem;
 }
 
-/* 🔧 마이페이지 레이아웃 구성 */
-.with-sidebar {
-    display: flex;
-    gap: 30px;
-}
+/*!* 🔧 마이페이지 레이아웃 구성 *!*/
+/*.with-sidebar {*/
+/*    display: flex;*/
+/*    gap: 30px;*/
+/*}*/
 
 .sidebar {
     width: 200px;
@@ -284,9 +284,88 @@ body {
     margin-bottom: 10px;
     font-size: 1rem;
 }
-/* ✨ 동적으로 나타나는 form은 기본적으로 숨김 */
+/* 🌐 박스 모델 기본값 설정 (안정적인 레이아웃 처리) */
+* {
+    box-sizing: border-box;
+}
+
+/* 🔷 공통: 폼 상자 스타일 */
 .place-form {
     display: none;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    max-width: 100%;             /* ✅ 부모를 넘지 않도록 제한 */
+    overflow-x: hidden;          /* ✅ 가로 넘침 방지 */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 📌 제목 강조 */
+.place-form h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    color: #2d9cdb;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+/* 🔤 입력창 */
+.place-form input {
+    margin-bottom: 14px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border 0.2s;
+}
+
+.place-form input:focus {
+    outline: none;
+    border-color: #2d9cdb;
+}
+
+/* 🔘 버튼 */
+.place-form button {
+    background-color: #2d9cdb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.place-form button:hover {
+    background-color: #1b7db8;
+}
+
+/* 🧾 결과 출력 상자 */
+.place-form div[id$='result'] {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    color: #333;
+
+    /* ✅ 아래 불필요한 여백 제거 */
+    min-height: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* ✨ fade 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* 🔥 활성화된 폼만 보이게 처리 (JS에서 제어) */
