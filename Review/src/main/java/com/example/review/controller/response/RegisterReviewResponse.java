@@ -3,27 +3,48 @@ package com.example.review.controller.response;
 import com.example.review.entity.Review;
 
 public class RegisterReviewResponse {
-    private String message;
+
     private Long reviewId;
+    private Long placeId;
+    private Long accountId;
+    private String reviewTitle;
+    private String reviewContent;
 
-    public RegisterReviewResponse() {
+    public RegisterReviewResponse(Long reviewId, Long placeId, Long accountId, String reviewTitle, String reviewContent) {
+        this.reviewId = reviewId;
+        this.placeId = placeId;
+        this.accountId = accountId;
+        this.reviewTitle = reviewTitle;
+        this.reviewContent = reviewContent;
     }
 
-    public RegisterReviewResponse(String message) {
-        this.message = message;
-    }
-    public static RegisterReviewResponse from(Review review) {
-        RegisterReviewResponse response = new RegisterReviewResponse();
-        response.reviewId = review.getReviewId();
-        response.message = "리뷰가 성공적으로 등록되었습니다.";
-        return response;
-    }
-    public String getMessage() {
-        return message;
-    }
     public Long getReviewId() {
         return reviewId;
     }
 
-}
+    public Long getPlaceId() {
+        return placeId;
+    }
 
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public String getReviewTitle() {
+        return reviewTitle;
+    }
+
+    public String getReviewContent() {
+        return reviewContent;
+    }
+
+    public static RegisterReviewResponse from(Review review) {
+        return new RegisterReviewResponse(
+                review.getReviewId(),
+                review.getPlaceId(),
+                review.getAccountId(),
+                review.getReviewTitle(),
+                review.getReviewContent()
+        );
+    }
+}
