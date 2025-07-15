@@ -31,6 +31,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: review-service
+          uri: lb://REVIEW
+          predicates:
+            - Path=/api/review/**
+          filters:
+            - StripPrefix=1
+
       discovery:
         locator:
           enabled: true                    # Eureka?? ??? ?? ???? ?? ?? ??? ???.
