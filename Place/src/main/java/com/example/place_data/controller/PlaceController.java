@@ -6,6 +6,7 @@ import com.example.place_data.controller.request.RegisterPlaceWithAuthorizationR
 import com.example.place_data.controller.request.UpdatePlaceWithAuthorizationRequest;
 import com.example.place_data.controller.response.IdAccountResponse;
 import com.example.place_data.controller.response.RegisterPlaceWithAuthorizationResponse;
+import com.example.place_data.controller.response.SearchPlaceResponse;
 import com.example.place_data.controller.response.UpdatePlaceResponse;
 import com.example.place_data.entity.Place;
 import com.example.place_data.repository.PlaceRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -60,44 +62,56 @@ public class PlaceController {
     }
 
     // 여행지 목록 조회 API 구현
-    @GetMapping
-    public List<Place> listPlaces() {
+    @GetMapping("/list")
+    public List<SearchPlaceResponse> listPlaces() {
         log.info("Received request to list all places");
-        return placeRepository.findAll();
+        List<Place> places = placeRepository.findAll();
+
+        return places.stream()
+                .map(SearchPlaceResponse::from)
+                .collect(Collectors.toList());
     }
+
 
     // 특정 여행지 상세 조회 API 구현 (1)
     @GetMapping("/{place_id}")
-    public Place getPlaceById(@PathVariable Long place_id) {
+    public SearchPlaceResponse getPlaceById(@PathVariable Long place_id) {
         log.info("Received request to get a place by id: {}", place_id);
-        return placeRepository.findById(place_id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
+        Place place = placeRepository.findById(place_id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾지 못했습니다."));
+
+        return SearchPlaceResponse.from(place);
     }
 
     // 특정 여행지 상세 조회 API 구현 (2)
     @PostMapping("/search")
-    public List<Place> searchPlaces(@RequestBody PlaceSearchRequest request) {
+    public List<SearchPlaceResponse> searchPlaces(@RequestBody PlaceSearchRequest request) {
         String title = request.getTitle();
         String category = request.getCategory();
         String location = request.getLocation();
 
+        List<Place> result;
+
         if (title != null && category != null && location != null) {
-            return placeRepository.findByTitleContainingAndCategoryAndLocation(title, category, location);
+            result = placeRepository.findByTitleContainingAndCategoryAndLocation(title, category, location);
         } else if (title != null && category != null) {
-            return placeRepository.findByTitleContainingAndCategory(title, category);
+            result = placeRepository.findByTitleContainingAndCategory(title, category);
         } else if (title != null && location != null) {
-            return placeRepository.findByTitleContainingAndLocation(title, location);
+            result = placeRepository.findByTitleContainingAndLocation(title, location);
         } else if (title != null) {
-            return placeRepository.findByTitleContaining(title);
+            result = placeRepository.findByTitleContaining(title);
         } else if (category != null && location != null) {
-            return placeRepository.findByCategoryAndLocation(category, location);
+            result = placeRepository.findByCategoryAndLocation(category, location);
         } else if (category != null) {
-            return placeRepository.findByCategory(category);
+            result = placeRepository.findByCategory(category);
         } else if (location != null) {
-            return placeRepository.findByLocation(location);
+            result = placeRepository.findByLocation(location);
         } else {
-            return placeRepository.findAll();
+            result = placeRepository.findAll();
         }
+
+        return SearchPlaceResponse.from(result);
     }
 
     // 여행지 수정 API 구현 (인증받은 사용자만 여행지 수정 가능)
