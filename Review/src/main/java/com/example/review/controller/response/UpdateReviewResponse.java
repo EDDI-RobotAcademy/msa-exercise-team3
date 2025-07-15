@@ -13,7 +13,7 @@ public class UpdateReviewResponse {
     private String reviewContent;
 
     public UpdateReviewResponse() {
-        
+
     }
 
     public UpdateReviewResponse(Long reviewId, Long placeId, Long accountId, String reviewTitle, String reviewContent) {
