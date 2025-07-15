@@ -1,4 +1,4 @@
-/* 전체 초기화 */
+/* 🌐 전체 초기화 */
 body {
     margin: 0;
     padding: 0;
@@ -37,14 +37,19 @@ body {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* 🟩 본문 메인 */
+/* 🟩 메인 콘텐츠 카드형 */
 .dashboard-main {
-    max-width: 800px;
+    max-width: 900px;
     margin: 40px auto;
     background: white;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+    /* ✅ 높이 최소 전체 화면을 차지하도록 */
+    min-height: calc(100vh - 120px); /* 헤더 높이 고려 */
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-main h1 {
@@ -53,7 +58,7 @@ body {
     color: #333;
 }
 
-/* 🟨 추천 영역 */
+/* 🟨 추천 기능 UI */
 .recommend-section h2 {
     margin-bottom: 20px;
     font-size: 1.3rem;
@@ -97,18 +102,58 @@ body {
     min-height: 60px;
     font-size: 1rem;
 }
-/* 마이페이지 폼 레이아웃 */
-.profile-section form {
+
+/* 🔧 마이페이지 레이아웃 구성 */
+.with-sidebar {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 20px;
+    gap: 30px;
 }
 
+.sidebar {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #eee;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sidebar button:hover {
+    background-color: #d4d4d4;
+}
+
+/* 🔽 동적 컨텐츠 영역 기본값 */
+.content-area {
+    flex: 1;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    min-height: 300px; /* ✅ 보기 좋게 최소 높이 지정 */
+}
+
+.profile-section {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 📌 공통 폼 스타일 */
 .profile-section label {
     font-weight: 600;
     color: #444;
     margin-top: 10px;
+    display: block;
 }
 
 .profile-section input {
@@ -116,6 +161,7 @@ body {
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 1rem;
+    width: 100%;
 }
 
 .profile-section button {
@@ -127,9 +173,123 @@ body {
     font-size: 1rem;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .profile-section button:hover {
     background-color: #1b7db8;
+}
+
+/* 🔴 위험 작업 (ex. 회원탈퇴)용 버튼 */
+.profile-section button.danger {
+    background-color: #e74c3c;
+}
+
+.profile-section button.danger:hover {
+    background-color: #c0392b;
+}
+/* 하단 탭 네비게이션 */
+.sub-nav {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.sub-nav button {
+    padding: 10px 16px;
+    background-color: #eee;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.sub-nav button:hover {
+    background-color: #dcdcdc;
+}
+
+/* 탭 섹션 공통 */
+.tab-section {
+    margin-top: 20px;
+}
+
+.tab-flex {
+    display: flex;
+    gap: 30px;
+}
+
+.input-box {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-box input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.input-box button {
+    padding: 10px;
+    background-color: #2d9cdb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.input-box button:hover {
+    background-color: #1b7db8;
+}
+
+.result-box {
+    flex: 1;
+    padding: 20px;
+    background-color: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-height: 150px;
+    font-size: 1rem;
+}
+.input-box select {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+#place-manage-content h3 {
+    margin-bottom: 12px;
+    color: #333;
+}
+
+#place-manage-content textarea {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+#place-manage-content select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+/* ✨ 동적으로 나타나는 form은 기본적으로 숨김 */
+.place-form {
+    display: none;
+}
+
+/* 🔥 활성화된 폼만 보이게 처리 (JS에서 제어) */
+.place-form.active {
+    display: block;
 }
