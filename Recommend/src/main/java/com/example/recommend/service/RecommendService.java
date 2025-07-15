@@ -3,11 +3,11 @@ package com.example.recommend.service;
 import com.example.recommend.client.AccountClient;
 import com.example.recommend.client.PlaceClient;
 import com.example.recommend.dto.request.PlaceSearchRequest;
+import com.example.recommend.dto.response.PlaceResponseDto;
 import com.example.recommend.dto.request.RecommendKeywordRequestDto;
 import com.example.recommend.dto.request.RecommendLocationRequestDto;
 import com.example.recommend.dto.response.IdAccountResponseDto;
-import com.example.recommend.dto.response.PlaceResponseDto;
-import com.example.recommend.dto.response.RecommendResultResponse;
+//import com.example.recommend.dto.response.RecommendResultResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class RecommendService {
     private final PlaceClient placeClient;
 
     /**
-     * ✅ 키워드 기반으로 추천 장소 목록을 반환하는 메서드
+     * 키워드 기반으로 추천 장소 목록을 반환하는 메서드
      * - 사용자의 유효성을 검증 (토큰을 통해 FeignClient로 검증)
      * - 키워드 기반 추천 장소 리스트를 반환
      */
@@ -45,7 +45,7 @@ public class RecommendService {
     }
 
     /**
-     * ✅ 키워드 기반 장소 중 하나를 랜덤으로 골라 추천하는 메서드
+     * 키워드 기반 장소 중 하나를 랜덤으로 골라 추천하는 메서드
      * - 유저 정보 확인 후
      * - 키워드 기반 추천 장소를 조회
      * - 랜덤으로 하나 선택해서 추천
@@ -59,7 +59,7 @@ public class RecommendService {
         // 3. 결과가 비어있을 경우 예외 처리
         if (places == null || places.isEmpty()) {
             // 아무것도 없으면 기본 메시지 반환
-            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "","",null);
+            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "");
         }
         return places.get(new Random().nextInt(places.size()));
     }
