@@ -1,6 +1,8 @@
 package com.example.recommend.controller;
 
+import com.example.recommend.dto.request.PlaceSearchRequest;
 import com.example.recommend.dto.request.RecommendKeywordRequestDto;
+import com.example.recommend.dto.request.RecommendLocationRequestDto;
 import com.example.recommend.dto.response.PlaceResponseDto;
 import com.example.recommend.dto.response.RecommendResultResponse;
 import com.example.recommend.service.RecommendService;
@@ -39,29 +41,29 @@ public class RecommendController {
     @PostMapping("/list/keyword")
     public ResponseEntity<List<PlaceResponseDto>> recommendListKeyword(
             @RequestHeader("Authorization") String token,
-            @RequestBody RecommendKeywordRequestDto requestDto
+            @RequestBody PlaceSearchRequest requestDto
     ) {
-        String pureToken = extractToken(token);  // "Bearer " 제거
-        List<PlaceResponseDto> result = recommendService.recommendListKeyword(pureToken, requestDto);
+//        String pureToken = extractToken(token);  // "Bearer " 제거
+        List<PlaceResponseDto> result = recommendService.recommendListKeyword(token, requestDto);
         return ResponseEntity.ok(result);
     }
     @PostMapping("/list/location")
     public ResponseEntity<List<PlaceResponseDto>> recommendListLocation(
             @RequestHeader("Authorization") String token,
-            @RequestBody RecommendKeywordRequestDto requestDto
+            @RequestBody PlaceSearchRequest requestDto
     ) {
-        String pureToken = extractToken(token);  // "Bearer " 제거
-        List<PlaceResponseDto> result = recommendService.recommendListLocation(pureToken, requestDto);
+//        String pureToken = extractToken(token);  // "Bearer " 제거
+        List<PlaceResponseDto> result = recommendService.recommendListLocation(token, requestDto);
         return ResponseEntity.ok(result);
     }
     // 📌 키워드 기반 랜덤 장소 추천
     @PostMapping("/random")
     public ResponseEntity<PlaceResponseDto> recommendRandom(
             @RequestHeader("Authorization") String token,
-            @RequestBody RecommendKeywordRequestDto keywordDto
+            @RequestBody PlaceSearchRequest keywordDto
     ) {
-        String pureToken = extractToken(token);
-        return ResponseEntity.ok(recommendService.recommendRandom(pureToken, keywordDto));
+//        String pureToken = extractToken(token);
+        return ResponseEntity.ok(recommendService.recommendRandom(token, keywordDto));
     }
 
     private String extractToken(String token) {
