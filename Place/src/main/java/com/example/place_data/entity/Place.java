@@ -22,6 +22,7 @@ public class Place {
     private String category;
     private String location;
     private String address;
+    private String message;
 
     private Long accountId;
 
@@ -91,5 +92,13 @@ public class Place {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
