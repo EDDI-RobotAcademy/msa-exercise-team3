@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 대시보드</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script defer src="/js/dashboard.js"></script>
+</head>
+<body>
+<header class="top-nav">
+    <div class="logo">🏖 PlaceData</div>
+    <nav class="top-menu">
+        <button onclick="goToProfile()">마이페이지</button>
+        <button onclick="logout()">로그아웃</button>
+    </nav>
+</header>
+
+<main class="dashboard-main">
+    <h1>🎉 환영합니다, <span id="nick-span"></span>님!</h1>
+
+    <section class="recommend-section">
+        <h2>🔍 키워드 기반 여행지 추천</h2>
+        <div class="recommend-input">
+            <input type="text" id="keyword" placeholder="예: 바다, 맛집, 산책">
+            <button onclick="searchByKeyword()">추천 검색</button>
+        </div>
+        <div id="recommend-result" class="recommend-result"></div>
+    </section>
+</main>
+</body>
+</html>
