@@ -12,6 +12,7 @@ import com.example.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -66,35 +67,29 @@ public class ReviewController {
     }
 
 
-    @PostMapping("/update")
+    @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @RequestHeader("Authorization") String token,
-            @RequestBody UpdateReviewRequest update){
+            @RequestBody UpdateReviewRequest update) {
         log.info("Updating review -> {}", update);
 
         String pureToken = extractToken(token);
         IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
         Long accountId = response.getAccountId();
 
-        Optional<Review> optionalReview = reviewRepository.findById(update.getReviewId());
-        if (optionalReview.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        Review review = optionalReview.get();
-
+        Review review = reviewRepository.findById(update.getReviewId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."));
 
         if (!review.getAccountId().equals(accountId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "리뷰를 수정할 권한이 없습니다.");
         }
 
-        //리뷰 제목과 내용 수정
         review.setReviewTitle(update.getReviewTitle());
         review.setReviewContent(update.getReviewContent());
 
-        Review updatedReview = reviewRepository.save(review);
+        Review updated = reviewRepository.save(review);
 
-        return ResponseEntity.ok(UpdateReviewResponse.from(updatedReview));
-
+        return ResponseEntity.ok(UpdateReviewResponse.from(updated));
     }
 
 
