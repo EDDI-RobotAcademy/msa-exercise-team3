@@ -6,11 +6,9 @@ import com.example.review.controller.request.RegisterReviewRequest;
 import com.example.review.controller.request.UpdateReviewRequest;
 import com.example.review.controller.response.IdAccountResponse;
 import com.example.review.controller.response.RegisterReviewResponse;
-import com.example.review.controller.response.SearchPlaceResponse;
 import com.example.review.controller.response.UpdateReviewResponse;
 import com.example.review.entity.Review;
 import com.example.review.repository.ReviewRepository;
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +22,11 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/review")
+
+
 public class ReviewController {
     @Autowired
-    ReviewRepository reviewRepository;
+    ReviewRepository  reviewRepository;
     @Autowired
     AccountClient accountClient;
     @Autowired
@@ -35,27 +35,18 @@ public class ReviewController {
     @PostMapping("/register")
     public RegisterReviewResponse register(
             @RequestHeader("Authorization") String token,
-            @RequestBody RegisterReviewRequest request
-    ) {
+            @RequestBody RegisterReviewRequest request) {
         log.info("Registering new review -> {}", request);
 
         String pureToken = extractToken(token);
         IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
         Long accountId = response.getAccountId();
+        log.info("Account Id -> {}", accountId);
 
-        // placeId 존재 여부 확인
-        try {
-            placeClient.getPlaceById(request.getPlaceId()); // 예외가 나면 404 → catch
-        } catch (FeignException.NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 placeId에 해당하는 장소가 존재하지 않습니다.");
-        }
-
-        // 리뷰 등록
-        Review review = request.toReview(accountId);
-        Review saved = reviewRepository.save(review);
-        return RegisterReviewResponse.from(saved);
+        Review requestedReview = request.toReview(accountId);
+        Review registeredReview = reviewRepository.save(requestedReview);
+        return RegisterReviewResponse.from(registeredReview);
     }
-
     private String extractToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);
