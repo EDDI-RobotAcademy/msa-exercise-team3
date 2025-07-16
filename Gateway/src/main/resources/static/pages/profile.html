@@ -27,33 +27,22 @@
     <div class="content-area">
         <!-- 🔁 회원정보 수정 폼 -->
         <!-- ✅ 회원정보 수정 섹션 -->
-        <section id="edit" class="tab-section hidden">
-            <div class="tab-flex">
-                <div class="content-area">
-                    <form id="profile-form" class="place-form active">
-                        <h2>🛠 회원정보 수정</h2>
+        <section id="edit" class="profile-section hidden">
+            <h2>회원정보 수정</h2>
+            <p>수정할 내용을 입력하고 확인을 눌러주세요. ✏️</p>
+            <form id="profile-form">
+                <label for="edit-nickname">새 닉네임</label>
+                <input type="text" id="edit-nickname" placeholder="변경할 닉네임 입력" />
 
-                        <div class="form-group">
-                            <label for="edit-nickname">✨ 새 닉네임</label>
-                            <input type="text" id="edit-nickname" placeholder="변경할 닉네임 입력" />
-                        </div>
+                <label for="edit-current-password">현재 비밀번호</label>
+                <input type="password" id="edit-current-password" placeholder="현재 비밀번호 입력" required />
 
-                        <div class="form-group">
-                            <label for="edit-current-password">🔒 현재 비밀번호</label>
-                            <input type="password" id="edit-current-password" placeholder="현재 비밀번호 입력" required />
-                        </div>
+                <label for="edit-new-password">새 비밀번호</label>
+                <input type="password" id="edit-new-password" placeholder="새 비밀번호 입력" required />
 
-                        <div class="form-group">
-                            <label for="edit-new-password">🆕 새 비밀번호</label>
-                            <input type="password" id="edit-new-password" placeholder="새 비밀번호 입력" required />
-                        </div>
-
-                        <button type="submit" class="primary">✅ 정보 수정</button>
-
-                        <div id="profile-update-result" class="result-box"></div>
-                    </form>
-                </div>
-            </div>
+                <button type="submit" class="primary">정보 수정</button>
+            </form>
+            <div id="profile-update-result" class="result-text"></div>
         </section>
 
         <!-- ✅ 회원탈퇴 섹션 -->

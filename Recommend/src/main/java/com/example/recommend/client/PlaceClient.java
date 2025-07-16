@@ -12,7 +12,7 @@ import java.util.List;
 public interface PlaceClient {
 
     // ✅ keyword, location, title 조합 모두 처리할 단일 search
-    @PostMapping("/places/search")
+    @PostMapping("/place/search")
     List<PlaceResponseDto> searchPlaces(@RequestBody PlaceSearchRequest request);
     /*
     place측 처리

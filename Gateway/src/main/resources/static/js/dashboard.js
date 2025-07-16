@@ -35,7 +35,9 @@ function showTab(tabName) {
     }
 
 }
-
+let allResults = []; // 전체 결과 보관
+let currentPage = 0;
+const pageSize = 10;
 // ✅ 국내여행지 검색 기능 (백엔드 연동)
 async function searchDomestic() {
     const title = document.getElementById("domestic-title").value.trim();
@@ -43,16 +45,9 @@ async function searchDomestic() {
     const location = document.getElementById("domestic-location").value.trim();
     const resultBox = document.getElementById("domestic-result");
 
-    // // ✅ 입력값 확인
-    // if (!title || !category || !location) {
-    //     resultBox.textContent = "모든 값을 입력해주세요.";
-    //     return;
-    // }
-
     try {
-        const token = localStorage.getItem("userToken"); // 토큰 가져오기
-
-        const response = await axios.post("/api/place/search", {
+        const token = localStorage.getItem("userToken");
+        const response = await axios.post("/api/recommend/list/keyword", {
             title,
             category,
             location
@@ -63,23 +58,59 @@ async function searchDomestic() {
             }
         });
 
-        const data = response.data;
-
-        // ✅ 결과 출력 (리스트 형태 가정)
-        if (Array.isArray(data) && data.length > 0) {
-            const listHtml = data.map(place =>
-                `<li>📍 ${place.title} (${place.location} - ${place.category})</li>`
-            ).join("");
-
-            resultBox.innerHTML = `<ul>${listHtml}</ul>`;
-        } else {
-            resultBox.textContent = "검색 결과가 없습니다.";
-        }
+        allResults = response.data; // 전체 결과 저장
+        currentPage = 0;
+        renderPage(); // 첫 페이지 렌더링
 
     } catch (error) {
-        console.error("검색 실패:", error);
+        console.error("❌ 검색 오류:", error);
         resultBox.textContent = "검색 중 오류가 발생했습니다.";
     }
+}
+function renderPage() {
+    const resultBox = document.getElementById("domestic-result");
+    const resultList = document.createElement("ul");
+    resultList.id = "result-list";
+    resultBox.innerHTML = "";
+
+    const start = currentPage * pageSize;
+    const end = start + pageSize;
+    const currentItems = allResults.slice(start, end);
+
+    if (currentItems.length === 0) {
+        resultBox.textContent = "결과가 없습니다.";
+        return;
+    }
+
+    currentItems.forEach(place => {
+        const li = document.createElement("li");
+        li.textContent = `📍 ${place.title} (${place.location} - ${place.category})`;
+        resultList.appendChild(li);
+    });
+
+    resultBox.appendChild(resultList);
+    updatePaginationButtons();
+}
+// ✅ 이전 / 다음 버튼 클릭 핸들러
+function goToPrevPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        renderPage();
+    }
+}
+
+function goToNextPage() {
+    if ((currentPage + 1) * pageSize < allResults.length) {
+        currentPage++;
+        renderPage();
+    }
+}
+function updatePaginationButtons() {
+    const prevBtn = document.getElementById("prev-page-btn");
+    const nextBtn = document.getElementById("next-page-btn");
+
+    prevBtn.style.display = currentPage > 0 ? "inline-block" : "none";
+    nextBtn.style.display = (currentPage + 1) * pageSize < allResults.length ? "inline-block" : "none";
 }
 // ✅ 랜덤여행지 추천 기능
 async function searchRandom() {
@@ -91,7 +122,7 @@ async function searchRandom() {
     try {
         const token = localStorage.getItem("userToken"); // 토큰 가져오기
 
-        const response = await axios.post("/api/place/search", {
+        const response = await axios.post("/api/recommend/random", {
             title,
             category,
             location
@@ -103,20 +134,19 @@ async function searchRandom() {
         });
 
         const data = response.data;
-
-        // ✅ 결과 출력 (랜덤 하나만 선택)
-        if (Array.isArray(data) && data.length > 0) {
-            const randomIndex = Math.floor(Math.random() * data.length);
-            const place = data[randomIndex];
+        if (data && typeof data === "object") {
+            const place = data;
 
             resultBox.innerHTML = `
-                <div>
-                    <h3>✨ 랜덤 추천 장소</h3>
-                    <p>📍 <strong>${place.title}</strong></p>
-                    <p>📍 위치: ${place.location}</p>
-                    <p>📁 카테고리: ${place.category}</p>
-                </div>
-            `;
+        <div>
+            <h3>✨ 랜덤 추천 장소</h3>
+            <p>📍 <strong>${place.title}</strong></p>
+            <p>📝 설명: ${place.content}</p>
+            <p>📍 위치: ${place.location}</p>
+            <p>📁 카테고리: ${place.category}</p>
+            <p>🏠 주소: ${place.address}</p>
+        </div>
+    `;
         } else {
             resultBox.textContent = "추천 결과가 없습니다.";
         }
