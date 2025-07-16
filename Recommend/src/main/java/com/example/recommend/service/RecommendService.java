@@ -59,7 +59,7 @@ public class RecommendService {
         // 3. 결과가 비어있을 경우 예외 처리
         if (places == null || places.isEmpty()) {
             // 아무것도 없으면 기본 메시지 반환
-            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "");
+            return new PlaceResponseDto(null, "추천 장소가 없습니다.", "", "", "","");
         }
         return places.get(new Random().nextInt(places.size()));
     }

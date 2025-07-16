@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PlaceResponseDto {
+    private Long place_id;
     private String title;     // 제목
     private String content;   // 내용 요약
     private String category;  // 테마 (HEALING, NIGHTLIFE 등)
@@ -18,7 +19,8 @@ public class PlaceResponseDto {
 //    }
 
 
-    public PlaceResponseDto(String title, String content, String category, String location, String address) {
+    public PlaceResponseDto(Long place_id, String title, String content, String category, String location, String address) {
+        this.place_id = place_id;
         this.title = title;
         this.content = content;
         this.category = category;
