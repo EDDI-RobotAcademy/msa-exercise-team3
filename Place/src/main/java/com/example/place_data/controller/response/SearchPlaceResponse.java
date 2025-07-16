@@ -17,6 +17,14 @@ public class SearchPlaceResponse {
     private String address;
 
     public SearchPlaceResponse(){}
+    
+    public SearchPlaceResponse(String title, String content, String category, String location, String address) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.location = location;
+        this.address = address;
+    }
 
     public SearchPlaceResponse(Long place_id, String title, String content, String category, String location, String address) {
         this.place_id = place_id;
