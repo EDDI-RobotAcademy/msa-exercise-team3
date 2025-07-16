@@ -32,5 +32,4 @@ public class RegisterReviewRequest {
         return new Review(placeId, accountId, reviewTitle, reviewContent);
     }
 
-
 }
