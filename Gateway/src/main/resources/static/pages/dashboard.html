@@ -69,9 +69,14 @@
                 </select>
 
                 <button onclick="searchDomestic()">검색</button>
+                <!-- ✅ 페이지네이션 버튼 -->
+                <button id="prev-page-btn" onclick="goToPrevPage()" style="display:none;">⬅ 이전</button>
+                <button id="next-page-btn" onclick="goToNextPage()" style="display:none;">다음 ➡</button>
+
             </div>
 
             <div class="result-box" id="domestic-result">여기에 추천 결과가 나타납니다.</div>
+
         </div>
     </section>
 
