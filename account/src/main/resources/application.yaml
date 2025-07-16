@@ -27,7 +27,7 @@ spring:
       password: eddi@123
 
 server:
-  port: 12345
+  port: 9090
 
 eureka:
   client:
