@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 public class SearchPlaceResponse {
+    private Long place_id;
     private String title;
     private String content;
     private String category;
@@ -17,7 +18,8 @@ public class SearchPlaceResponse {
 
     public SearchPlaceResponse(){}
 
-    public SearchPlaceResponse(String title, String content, String category, String location, String address) {
+    public SearchPlaceResponse(Long place_id, String title, String content, String category, String location, String address) {
+        this.place_id = place_id;
         this.title = title;
         this.content = content;
         this.category = category;
@@ -27,6 +29,7 @@ public class SearchPlaceResponse {
 
     public static SearchPlaceResponse from(Place place) {
         return new SearchPlaceResponse(
+                place.getPlace_id(),
                 place.getTitle(),
                 place.getContent(),
                 place.getCategory(),
@@ -39,6 +42,14 @@ public class SearchPlaceResponse {
         return places.stream()
                 .map(SearchPlaceResponse::from)
                 .toList();
+    }
+
+    public Long getPlace_id() {
+        return place_id;
+    }
+
+    public void setPlace_id(Long place_id) {
+        this.place_id = place_id;
     }
 
     public String getTitle() {
