@@ -6,11 +6,14 @@ import com.example.account.controller.request.UpdateAccountRequest;
 import com.example.account.controller.response.*;
 import com.example.account.controller.request.LoginAccountRequest;
 import com.example.account.entity.Account;
+import com.example.account.entity.AccountLoginType;
+import com.example.account.entity.LoginType;
 import com.example.account.redis_cache.RedisCacheService;
+import com.example.account.repository.AccountLoginTypeRepository;
 import com.example.account.repository.AccountRepository;
 import com.example.account.utility.EncryptionUtility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +24,25 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/account")
 public class AccountController {
 
-    @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
-    RedisCacheService redisCacheService;
+    final private AccountRepository accountRepository;
+    final private RedisCacheService redisCacheService;
+    final private AccountLoginTypeRepository accountLoginTypeRepository;
 
     @PostMapping("/register")
     public RegisterAccountResponse register(@RequestBody RegisterAccountRequest request){
         log.info("register -> RegisterAccountRequest: {}", request);
-        Account registerAccount = request.toAccount();
+
+        // 해당 로그인 타입이 있는지 확인
+        AccountLoginType local = accountLoginTypeRepository.findByLoginType(LoginType.LOCAL)
+                .orElseThrow(()-> new IllegalStateException("login type not found"));
+
+        // 요청받은 내용들을 db에 저장
+        Account registerAccount = request.toAccount(local);
         Account createdAccount = accountRepository.save(registerAccount);
 
         return RegisterAccountResponse.from(createdAccount);
@@ -43,8 +51,11 @@ public class AccountController {
     @PostMapping("/login")
     public LoginAccountResponse login(@RequestBody LoginAccountRequest request){
         log.info("login -> LoginRequest : {}", request);
-        String requestUserId = request.getUserId();
-        Optional<Account> maybeAccount = accountRepository.findByUserId(requestUserId);
+        AccountLoginType type = accountLoginTypeRepository.findByLoginType(LoginType.LOCAL)
+                .orElseGet(()-> accountLoginTypeRepository.save(new AccountLoginType(LoginType.LOCAL)));
+
+        String requestEmail = request.getEmail();
+        Optional<Account> maybeAccount = accountRepository.findByEmailAndLoginType(requestEmail, type);
 
         if(maybeAccount.isEmpty()){
             return new LoginAccountResponse("아이디와 비밀번호가 틀렸습니다.");
@@ -53,7 +64,7 @@ public class AccountController {
         String requestPassword = request.getPassword();
 
         String nickName = account.getNickName();
-        String message = nickName + "으로 로그인 성공하셨습니다!";
+        String message = nickName + "님 으로 로그인 성공하셨습니다!";
 
         boolean matched = EncryptionUtility.matches(requestPassword, account.getPassword());
         if(!matched){

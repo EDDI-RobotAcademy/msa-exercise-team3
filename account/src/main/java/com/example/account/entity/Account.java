@@ -1,29 +1,51 @@
 package com.example.account.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
-@Setter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(
+        name = "account",
+        uniqueConstraints = {
+            @UniqueConstraint(
+                name = "uk_email_login_type",
+                columnNames = {"email","login_type_id"}
+                )
+            }
+        )
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String userId;
+    String email;
     String password;
     String nickName;
 
-    public Account(String userId, String password, String nickName) {
-        this.userId = userId;
+    @ManyToOne
+    @JoinColumn(name = "login_type_id", nullable = false)
+    private AccountLoginType loginType;
+
+    public Account() {
+    }
+
+    public Account (String email, String password, String nickName, AccountLoginType loginType) {
+        this.email = email;
         this.password = password;
+        this.nickName = nickName;
+        this.loginType = loginType;
+    }
+
+    public void setLoginType(AccountLoginType loginType) {
+        this.loginType = loginType;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setNickName(String nickName) {
         this.nickName = nickName;
     }
 }
