@@ -39,7 +39,7 @@ public class AccountController {
 
         // 해당 로그인 타입이 있는지 확인
         AccountLoginType local = accountLoginTypeRepository.findByLoginType(LoginType.LOCAL)
-                .orElseThrow(()-> new IllegalStateException("login type not found"));
+                .orElseGet(()-> accountLoginTypeRepository.save(new AccountLoginType(LoginType.LOCAL)));
 
         // 요청받은 내용들을 db에 저장
         Account registerAccount = request.toAccount(local);
@@ -52,7 +52,7 @@ public class AccountController {
     public LoginAccountResponse login(@RequestBody LoginAccountRequest request){
         log.info("login -> LoginRequest : {}", request);
         AccountLoginType type = accountLoginTypeRepository.findByLoginType(LoginType.LOCAL)
-                .orElseGet(()-> accountLoginTypeRepository.save(new AccountLoginType(LoginType.LOCAL)));
+                .orElseThrow(()-> new IllegalStateException("login type not found"));
 
         String requestEmail = request.getEmail();
         Optional<Account> maybeAccount = accountRepository.findByEmailAndLoginType(requestEmail, type);
