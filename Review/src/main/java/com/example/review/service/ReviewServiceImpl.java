@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,28 +46,34 @@ public class ReviewServiceImpl implements ReviewService {
     //read
     @Override
     public ReviewResponse readReview(Long id) {
-        Review review = reviewRepository.findById(id).
-                orElseThrow(() -> new RuntimeException("해당 리뷰를 찾을 수 없습니다."));
-        return new ReviewResponse(
-                review.getId(),
-                review.getAccountId(),
-                review.getPlaceId(),
-                review.getTitle(),
-                review.getDescription()
-        );
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+
+        return ReviewResponse.builder()
+                .id(review.getId())
+                .accountId(review.getAccountId())
+                .placeId(review.getPlaceId())
+                .title(review.getTitle())
+                .description(review.getDescription())
+                .createdAt(review.getCreatedAt())
+                .build();
     }
 
     @Override
     public List<ReviewResponse> readByPlaceId(Long placeId) {
-        return reviewRepository.findByPlaceId(placeId).stream()
-                .map(review -> new ReviewResponse(
-                        review.getReviewId(),
-                        review.getAccountId(),
-                        review.getPlaceId(),
-                        review.getTitle(),
-                        review.getDescription()
-                ))
-                .toList();
+        List<Review> reviews = reviewRepository.findByPlaceId(placeId);
+
+        return reviews.stream()
+                .map(review -> ReviewResponse.builder()
+                        .id(review.getId())
+                        .accountId(review.getAccountId())
+                        .placeId(review.getPlaceId())
+                        .title(review.getTitle())
+                        .description(review.getDescription())
+                        .createdAt(review.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     //update
@@ -92,7 +99,8 @@ public class ReviewServiceImpl implements ReviewService {
                 updatedReview.getAccountId(),
                 updatedReview.getPlaceId(),
                 updatedReview.getTitle(),
-                updatedReview.getDescription()
+                updatedReview.getDescription(),
+                updatedReview.getCreatedAt()
         );
     }
 

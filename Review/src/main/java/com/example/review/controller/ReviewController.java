@@ -6,6 +6,7 @@ import com.example.review.controller.dto.request.review.UpdateReviewRequest;
 import com.example.review.controller.dto.response.IdAccountResponse;
 import com.example.review.controller.dto.response.review.RegisterReviewResponse;
 import com.example.review.controller.dto.response.review.ReviewResponse;
+import com.example.review.entity.Review;
 import com.example.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,13 +48,15 @@ public class ReviewController {
     }
     //리뷰 조회
     @GetMapping("/{id}")
-    public ReviewResponse readReview (@PathVariable("id") Long id){
+    public ReviewResponse readReview(@PathVariable("id") Long id) {
         return reviewService.readReview(id);
     }
+
     @GetMapping("/place/{placeId}")
-    public List<ReviewResponse> readbyplaceId(@PathVariable("placeId") Long placeId){
+    public List<ReviewResponse> readbyplaceId(@PathVariable("placeId") Long placeId) {
         return reviewService.readByPlaceId(placeId);
     }
+
 
     //리뷰수정
     @PutMapping("/{id}")
@@ -66,7 +69,7 @@ public class ReviewController {
         log.info("Authorization header: {}", token);
 
         ReviewResponse updatedReview = reviewService.updateReview(id, request, accountId);
-        return new ResponseEntity<>(updatedReview, HttpStatus.UPGRADE_REQUIRED);
+        return new ResponseEntity<>(updatedReview, HttpStatus.OK);
     }
 
     //리뷰삭제
