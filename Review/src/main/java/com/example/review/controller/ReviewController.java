@@ -1,121 +1,94 @@
 package com.example.review.controller;
 
 import com.example.review.client.AccountClient;
-import com.example.review.client.PlaceClient;
-import com.example.review.controller.request.RegisterReviewRequest;
-import com.example.review.controller.request.UpdateReviewRequest;
-import com.example.review.controller.response.IdAccountResponse;
-import com.example.review.controller.response.RegisterReviewResponse;
-import com.example.review.controller.response.UpdateReviewResponse;
-import com.example.review.entity.Review;
-import com.example.review.repository.ReviewRepository;
+import com.example.review.controller.dto.request.review.RegisterReviewRequest;
+import com.example.review.controller.dto.request.review.UpdateReviewRequest;
+import com.example.review.controller.dto.response.IdAccountResponse;
+import com.example.review.controller.dto.response.review.RegisterReviewResponse;
+import com.example.review.controller.dto.response.review.ReviewResponse;
+import com.example.review.service.ReviewService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/review")
-
+@RequiredArgsConstructor
 
 public class ReviewController {
     @Autowired
-    ReviewRepository  reviewRepository;
+    private ReviewService reviewService;
     @Autowired
-    AccountClient accountClient;
-    @Autowired
-    PlaceClient placeClient;
+    private AccountClient accountClient;
 
+    //리뷰 생성
     @PostMapping("/register")
-    public RegisterReviewResponse register(
+    public ResponseEntity<RegisterReviewResponse> registerReview(
             @RequestHeader("Authorization") String token,
-            @RequestBody RegisterReviewRequest request) {
-        log.info("Registering new review -> {}", request);
+            @RequestBody RegisterReviewRequest registerRequest) {
+        IdAccountResponse idAccountResponse = accountClient.getAccountId(token);
+        Long accountId = idAccountResponse.getAccountId();
+        log.info("Authorization header: {}", token);
 
-        String pureToken = extractToken(token);
-        IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
-        Long accountId = response.getAccountId();
-        log.info("Account Id -> {}", accountId);
-
-        Review requestedReview = request.toReview(accountId);
-        Review registeredReview = reviewRepository.save(requestedReview);
-        return RegisterReviewResponse.from(registeredReview);
+        RegisterReviewResponse reviewResponse = reviewService.registerReview(registerRequest, accountId);
+        return new ResponseEntity<>(reviewResponse, HttpStatus.CREATED);
     }
     private String extractToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);
         }
         return token;
-
-
+    }
+    //리뷰 조회
+    @GetMapping("/{id}")
+    public ReviewResponse readReview (@PathVariable("id") Long id){
+        return reviewService.readReview(id);
+    }
+    @GetMapping("/place/{placeId}")
+    public List<ReviewResponse> readbyplaceId(@PathVariable("placeId") Long placeId){
+        return reviewService.readByPlaceId(placeId);
     }
 
-    @GetMapping("/read/{reviewId}")
-    public ResponseEntity<RegisterReviewResponse> getReviewById(@PathVariable Long reviewId) {
-        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
-        if (optionalReview.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        Review review = optionalReview.get();
-        return ResponseEntity.ok(RegisterReviewResponse.from(review));
-    }
-
-
-    @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UpdateReviewResponse> updateReview(
+    //리뷰수정
+    @PutMapping("/{id}")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @PathVariable("id") Long id,
             @RequestHeader("Authorization") String token,
-            @RequestBody UpdateReviewRequest update) {
-        log.info("Updating review -> {}", update);
+            @RequestBody UpdateReviewRequest request) {
 
-        String pureToken = extractToken(token);
-        IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
-        Long accountId = response.getAccountId();
+        Long accountId = accountClient.getAccountId(token).getAccountId();
+        log.info("Authorization header: {}", token);
 
-        Review review = reviewRepository.findById(update.getReviewId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."));
+        ReviewResponse updatedReview = reviewService.updateReview(id, request, accountId);
+        return new ResponseEntity<>(updatedReview, HttpStatus.UPGRADE_REQUIRED);
+    }
 
-        if (!review.getAccountId().equals(accountId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "리뷰를 수정할 권한이 없습니다.");
-        }
+    //리뷰삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReviewResponse> deleteReview(@PathVariable("id") Long id,
+                                               @RequestHeader("Authorization") String token) {
+        Long accountId = accountClient.getAccountId(token).getAccountId();
+        log.info("Authorization header: {}", token);
 
-        review.setReviewTitle(update.getReviewTitle());
-        review.setReviewContent(update.getReviewContent());
+        reviewService.deleteReview(id, accountId);
 
-        Review updated = reviewRepository.save(review);
-
-        return ResponseEntity.ok(UpdateReviewResponse.from(updated));
+        // 삭제 성공 시, 200 OK 상태 코드와 함께 메시지 반환
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/delete/{reviewId}")
-    public ResponseEntity<?> deleteReview(
-            @RequestHeader("Authorization") String token,
-            @PathVariable Long reviewId) {
-        log.info("Received request to delete review with id: {}", reviewId);
 
-        String pureToken = extractToken(token);
-        IdAccountResponse response = accountClient.getAccountId("Bearer " + pureToken);
-        if (response == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 토큰입니다.");
-        }
-        Long accountId = response.getAccountId();
 
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."));
 
-        if (!review.getAccountId().equals(accountId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "리뷰를 삭제할 권한이 없습니다.");
-        }
 
-        reviewRepository.delete(review);
-        return ResponseEntity.ok().body("리뷰가 성공적으로 삭제되었습니다.");
-    }
+
+
 
 
 }
