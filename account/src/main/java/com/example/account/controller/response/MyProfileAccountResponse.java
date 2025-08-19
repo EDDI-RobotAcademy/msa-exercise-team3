@@ -3,29 +3,29 @@ package com.example.account.controller.response;
 import com.example.account.entity.Account;
 
 public class MyProfileAccountResponse {
-    private String userId;
+    private String email;
     private String nickName;
 
     public MyProfileAccountResponse() {
     }
 
-    public MyProfileAccountResponse(String userId, String nickName) {
-        this.userId = userId;
+    public MyProfileAccountResponse(String email, String nickName) {
+        this.email = email;
         this.nickName = nickName;
     }
 
     public static MyProfileAccountResponse from(Account account) {
         return new MyProfileAccountResponse(
-                account.getUserId(),
+                account.getEmail(),
                 account.getNickName());
     }
 
-    public String getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getNickName() {
