@@ -1,11 +1,9 @@
-package com.example.account.auth.kakao.service;
+package com.example.account.auth.google.service;
 
-import com.example.account.auth.kakao.repository.KakaoAuthenticationRepository;
-import com.example.account.auth.kakao.service.response.ExistingUserKakaoLoginResponse;
-import com.example.account.auth.kakao.service.response.KakaoLoginResponse;
-import com.example.account.auth.kakao.service.response.NewUserKakaoLoginResponse;
+import com.example.account.auth.google.repository.GoogleAuthenticationRepository;
+import com.example.account.auth.google.service.response.ExistingUserGoogleLoginResponse;
+import com.example.account.auth.google.service.response.GoogleLoginResponse;
 import com.example.account.config.FrontendConfig;
-import com.example.account.controller.AccountController;
 import com.example.account.entity.Account;
 import com.example.account.entity.AccountLoginType;
 import com.example.account.entity.LoginType;
@@ -16,62 +14,61 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoLoginResponseImpl implements KakaoAuthenticationService {
+public class GoogleAuthenticationServiceImpl implements GoogleAuthenticationService {
 
     final private AccountLoginTypeRepository accountLoginTypeRepository;
-    final private KakaoAuthenticationRepository kakaoAuthRepository;
+    final private GoogleAuthenticationRepository googleAuthRepository;
     final private RedisCacheService redisCacheService;
     final private AccountRepository accountRepository;
     final private FrontendConfig frontendConfig;
 
 
     @Override
-    public KakaoLoginResponse handleLogin(String code) {
+    public GoogleLoginResponse handleLogin(String code) {
 
-        // 실제 카카오 서버가 제공하는 access token 구하는 과정
-        Map<String,Object> tokenResponse = kakaoAuthRepository.getAccessToken(code);
+        // 실제 구글 서버가 제공하는 access token 구하는 과정
+        Map<String,Object> tokenResponse = googleAuthRepository.getAccessToken(code);
         String accessToken = (String) tokenResponse.get("access_token");
 
         // 인증된 사용자의 개인 정보들을 얻는 파트
-        Map<String,Object> userInfo = kakaoAuthRepository.getUserInfo(accessToken);
+        Map<String,Object> userInfo = googleAuthRepository.getUserInfo(accessToken);
         String nickname = extractNickname(userInfo);
         String email = extractEmail(userInfo);
 
-        // 카카오 미동의 하면 실패처리
+        // 구글 미동의 하면 실패처리
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("카카오 이메일 제공에 동의해야 합니다.");
+            throw new IllegalArgumentException("구글 이메일 제공에 동의해야 합니다.");
         }
 
-        AccountLoginType kakaoType = accountLoginTypeRepository.findByLoginType(LoginType.KAKAO)
-                .orElseGet(()-> accountLoginTypeRepository.save(new AccountLoginType(LoginType.KAKAO)));
+        AccountLoginType googleType = accountLoginTypeRepository.findByLoginType(LoginType.GOOGLE)
+                .orElseGet(()-> accountLoginTypeRepository.save(new AccountLoginType(LoginType.GOOGLE)));
 
         String origin = frontendConfig.getOrigins().get(0);
 
         Optional<Account> optionalAccount =
-                accountRepository.findByEmailAndLoginType(email, kakaoType);
+                accountRepository.findByEmailAndLoginType(email, googleType);
 
         if(optionalAccount.isEmpty()){
-            accountRepository.save(new Account(email, null, nickname, kakaoType));
-            optionalAccount = accountRepository.findByEmailAndLoginType(email, kakaoType);
+            accountRepository.save(new Account(email, null, nickname, googleType));
+            optionalAccount = accountRepository.findByEmailAndLoginType(email, googleType);
         }
 
         Account account = optionalAccount.get();
         String userToken = createUserTokenWithAccessToken(account, accessToken);
-        return new ExistingUserKakaoLoginResponse(userToken, nickname, email, origin);
+        return new ExistingUserGoogleLoginResponse(userToken, nickname, email, origin);
     }
 
     private String extractNickname(Map<String,Object> userInfo) {
-        return (String) ((Map<?,?>) userInfo.get("properties")).get("nickname");
+        return (String) userInfo.get("name");
     }
     private String extractEmail(Map<String,Object> userInfo) {
-        return (String) ((Map<?,?>) userInfo.get("kakao_account")).get("email");
+        return (String) userInfo.get("email");
     }
 
     private String createTemporaryUserToken(String accessToken) {
