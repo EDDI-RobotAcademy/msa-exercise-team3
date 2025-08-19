@@ -36,6 +36,25 @@ eureka:
     service-url:
       defaultZone: http://localhost:9876/eureka
 
+frontend:
+  authentication:
+    origins: ${FRONTEND_AUTHENTICATION_ORIGINS}
+
+kakao:
+  login-url: ${KAKAO_LOGIN_URL}
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+  token-request-uri: ${KAKAO_TOKEN_REQUEST_URI}
+  user-info-request-uri: ${KAKAO_USER_INFO_REQUEST_URI}
+
+google:
+  login-url: ${GOOGLE_LOGIN_URL}
+  client-id: ${GOOGLE_CLIENT_ID}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  redirect-uri: ${GOOGLE_REDIRECT_URI}
+  token-request-uri: ${GOOGLE_TOKEN_REQUEST_URI}
+  user-info-request-uri: ${GOOGLE_USER_INFO_REQUEST_URI}
+
 logging:
   level:
     com.example.account: DEBUG
