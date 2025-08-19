@@ -3,9 +3,7 @@ package com.example.account.auth.kakao.service;
 import com.example.account.auth.kakao.repository.KakaoAuthenticationRepository;
 import com.example.account.auth.kakao.service.response.ExistingUserKakaoLoginResponse;
 import com.example.account.auth.kakao.service.response.KakaoLoginResponse;
-import com.example.account.auth.kakao.service.response.NewUserKakaoLoginResponse;
 import com.example.account.config.FrontendConfig;
-import com.example.account.controller.AccountController;
 import com.example.account.entity.Account;
 import com.example.account.entity.AccountLoginType;
 import com.example.account.entity.LoginType;
@@ -16,14 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoLoginResponseImpl implements KakaoAuthenticationService {
+public class KakaoAuthenticationServiceImpl implements KakaoAuthenticationService {
 
     final private AccountLoginTypeRepository accountLoginTypeRepository;
     final private KakaoAuthenticationRepository kakaoAuthRepository;
