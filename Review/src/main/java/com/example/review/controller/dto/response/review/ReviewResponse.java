@@ -1,30 +1,44 @@
 package com.example.review.controller.dto.response.review;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
+
+import java.time.LocalDateTime;
+
+@Builder
 public class ReviewResponse {
-    private Long reviewId;
+    private Long id;
     private Long accountId;
     private Long placeId;
     private String title;
     private String description;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+
 
     public ReviewResponse() {}
-    public ReviewResponse(Long reviewId,Long accountId, Long placeId, String title, String description) {
-        this.reviewId = reviewId;
+
+
+    public ReviewResponse(Long id, Long accountId, Long placeId, String title, String description, LocalDateTime createdAt) {
+        this.id = id;
         this.accountId = accountId;
         this.placeId = placeId;
         this.title = title;
         this.description = description;
-
+        this.createdAt = createdAt;
     }
 
-    public Long getReviewId() {
-        return reviewId;
+
+    public Long getId() {
+        return id;
     }
     public Long getAccountId() {
         return accountId;
     }
-    public Long getPlaceId() {return placeId;}
+    public Long getPlaceId() {
+        return placeId;
+    }
     public String getTitle() {
         return title;
     }
@@ -33,4 +47,7 @@ public class ReviewResponse {
     }
 
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
